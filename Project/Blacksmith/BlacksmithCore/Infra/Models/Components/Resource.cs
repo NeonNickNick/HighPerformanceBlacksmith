@@ -73,10 +73,8 @@ namespace BlacksmithCore.Infra.Models.Components
         }
         private Dictionary<ResourceType.CEValue, ResourceTemplate> _resources = new();
         private static IReadOnlyDictionary<string, ResourceType.CEValue> _dictRef => ResourceType.EnumDict;
-        public Body Body { get; }
-        public Resource(Body body)
+        public Resource()
         {
-            Body = body;
             List<string> enumNames = _dictRef.Keys.ToList();
             string prefix = "Gold_";
             List<string> golds = enumNames.Where(e => e.StartsWith(prefix)).ToList();

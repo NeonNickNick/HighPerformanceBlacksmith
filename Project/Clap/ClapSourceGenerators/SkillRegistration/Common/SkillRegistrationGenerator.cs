@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -59,8 +61,18 @@ namespace ClapSourceGenerators.SkillRegistration.Common
             var skills = new List<SkillMethodInfo>();
             var diagnostics = new List<DiagnosticInfo>();
 
+            var currentFilePath = classDecl.SyntaxTree.FilePath;
+
             foreach (var method in methods)
             {
+                // Only process methods declared in the current partial file.
+                // GetMembers() returns all members across all partial declarations,
+                // so we must filter to avoid processing the same method multiple times.
+                var isDeclaredInThisFile = method.Locations.Any(
+                    loc => loc.SourceTree?.FilePath == currentFilePath);
+                if (!isDeclaredInThisFile)
+                    continue;
+
                 if (!method.Name.EndsWith("Check", StringComparison.Ordinal))
                     continue;
                 if (method.ReturnType.SpecialType != SpecialType.System_Boolean)
@@ -147,11 +159,30 @@ namespace ClapSourceGenerators.SkillRegistration.Common
 
         private static void GenerateSource(SourceProductionContext ctx, ImmutableArray<PackageInfo?> infos)
         {
+            // --- Step 1: Merge partial class declarations ---
+            // Multiple .cs files can declare the same partial class. Merge them by (Namespace, ClassName).
+            var mergedByClass = new Dictionary<string, PackageInfo>();
             foreach (var info in infos)
             {
                 if (info == null)
                     continue;
 
+                var classKey = $"{info.Namespace}.{info.ClassName}";
+                if (mergedByClass.TryGetValue(classKey, out var existing))
+                {
+                    // Merge: combine skills and diagnostics from all partials
+                    existing.Skills.AddRange(info.Skills);
+                    existing.Diagnostics.AddRange(info.Diagnostics);
+                }
+                else
+                {
+                    mergedByClass[classKey] = info;
+                }
+            }
+
+            // --- Step 2: Emit per-class sources and diagnostics ---
+            foreach (var info in mergedByClass.Values)
+            {
                 foreach (var diag in info.Diagnostics)
                 {
                     var descriptor = diag.Kind == DiagnosticKind.WrongReturnType

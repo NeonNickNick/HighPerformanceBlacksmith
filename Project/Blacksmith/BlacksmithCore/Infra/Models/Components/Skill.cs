@@ -8,31 +8,25 @@ using ClapInfra.ClapUnit;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
-    public class PackageContainer : ClapPackageContainer<ISkillPackage>
+    public class PackageContainer : ClapPackageContainer<MainProfession>
     {
         public ClapSharedFlag Flag { get; set; } = new();
-        public PackageContainer(ISkillPackage skillpackage) : base(skillpackage)
+        public PackageContainer(MainProfession skillpackage) : base(skillpackage)
         {
         }
     }
     public class Skill :
-        ClapSkill<PackageContainer, ISkillPackage, ISkillContext, IDSLSourceFile>,
+        ClapSkill<PackageContainer, MainProfession, ISkillContext, IDSLSourceFile>,
         IComponent<Body>
     {
         protected override List<PackageContainer> _packages { get; set; } = new() { new(new Common()) };
         public bool HaveProfession => _packages.Count > 1;
-        public Body Body { get; }
-        public Skill(Body body)
-        {
-            Body = body;
-        }
         public void Copy(Skill origin)
         {
             _packages.Clear();
             foreach(var pc in origin._packages)
             {
-                var p = (ISkillPackage)Activator.CreateInstance(pc.SkillPackage.GetType())!;
-                p.AvailableSkillNames = new HashSet<string>(pc.SkillPackage.AvailableSkillNames);
+                var p = (MainProfession)(pc.SkillPackage).Copy();
                 var n = new PackageContainer(p);
                 _packages.Add(n);//权宜之计
             }

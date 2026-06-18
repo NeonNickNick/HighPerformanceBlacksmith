@@ -23,8 +23,7 @@ namespace BlacksmithCore.Infra.Models.Components
             }
         }
         private Dictionary<Type, List<Unit>> _preprocesses = new();
-        public Body Body { get; }
-        public TurnContext(Body body) : base(new()
+        public TurnContext() : base(new()
         {
             typeof(AttackAnalyzableData),
             typeof(DefenseAnalyzableData),
@@ -32,7 +31,6 @@ namespace BlacksmithCore.Infra.Models.Components
             typeof(EffectAnalyzableData)
         })
         {
-            Body = body;
             foreach (var key in _analyzableDataLists.Keys)
             {
                 _preprocesses[key] = new();

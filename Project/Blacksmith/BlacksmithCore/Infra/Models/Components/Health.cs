@@ -21,11 +21,6 @@ namespace BlacksmithCore.Infra.Models.Components
             }
         }
         public int MHP { get; set; } = 10;
-        public Body Body { get; }
-        public Health(Body body)
-        {
-            Body = body;
-        }
         public void Copy(Health origin)
         {
             _hp = origin._hp;

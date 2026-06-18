@@ -13,12 +13,12 @@ namespace BlacksmithCore.Infra.Models.Entites
             Community = community;
             Add(new()
         {
-            new Skill(this),
-            new Health(this),
-            new Defense(this),
-            new Resource(this),
-            new Effect(this),
-            new TurnContext(this)
+            new Skill(),
+            new Health(),
+            new Defense(),
+            new Resource(),
+            new Effect(),
+            new TurnContext()
         });
         }
         public void Copy(Body origin)

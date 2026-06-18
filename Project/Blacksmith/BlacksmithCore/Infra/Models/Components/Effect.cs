@@ -4,15 +4,10 @@ using BlacksmithCore.Infra.Models.Entites;
 using ClapInfra.ClapModels.Entities;
 namespace BlacksmithCore.Infra.Models.Components
 {
-    public class Effect : IComponent<Body>, IUpdatePerRound
+    public class Effect : IUpdatePerRound, IComponent<Body>
     {
         private readonly List<EffectEntity> _effects = new();
         public List<EffectEntity> Effects => _effects;
-        public Body Body { get; }
-        public Effect(Body body)
-        {
-            Body = body;
-        }
         public void Copy(Effect origin)
         {
             _effects.Clear();

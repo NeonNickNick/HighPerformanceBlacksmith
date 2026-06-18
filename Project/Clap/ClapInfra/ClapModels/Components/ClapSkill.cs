@@ -8,20 +8,20 @@ namespace ClapInfra.ClapModels.Components
         Illegal,
         Rejected
     }
-    public abstract class ClapPackageContainer<TISkillPackage>
-        where TISkillPackage : notnull
+    public abstract class ClapPackageContainer<TMainProfession>
+        where TMainProfession : notnull
     {
         public string Name { get; }
-        public TISkillPackage SkillPackage { get; }
-        public ClapPackageContainer(TISkillPackage skillpackage)
+        public TMainProfession SkillPackage { get; }
+        public ClapPackageContainer(TMainProfession skillpackage)
         {
             Name = skillpackage.GetType().Name;
             SkillPackage = skillpackage;
         }
     }
-    public abstract class ClapSkill<TClapPackageContainer, TISkillPackage, TISkillContext, TIDSLSourceFile>
-        where TClapPackageContainer : ClapPackageContainer<TISkillPackage>
-        where TISkillPackage : IClapSkillPackage<TISkillContext, TIDSLSourceFile>
+    public abstract class ClapSkill<TClapPackageContainer, TMainProfession, TISkillContext, TIDSLSourceFile>
+        where TClapPackageContainer : ClapPackageContainer<TMainProfession>
+        where TMainProfession : ClapSkillPackage<TISkillContext, TIDSLSourceFile>
     {
         protected abstract List<TClapPackageContainer> _packages { get; set; }
         public virtual void AddPackage(TClapPackageContainer package)

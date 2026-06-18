@@ -4,6 +4,12 @@ namespace ClapInfra.ClapUnit
     {
         private int _times = 0;
         public bool IsActive => _times <= 0;
+        public ClapSharedFlag Copy()
+        {
+            var copy = new ClapSharedFlag();
+            copy._times = _times;
+            return copy;
+        }
         public void Disable()
         {
             _times++;

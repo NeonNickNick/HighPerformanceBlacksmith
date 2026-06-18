@@ -17,6 +17,6 @@ namespace BlacksmithCore.Infra.Profession
         {
             return new DSL.SourceFile(sc.Self);
         }
-
+        public abstract SkillPackageBase Copy();
     }
 }

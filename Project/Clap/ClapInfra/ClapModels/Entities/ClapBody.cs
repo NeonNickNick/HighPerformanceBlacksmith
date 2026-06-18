@@ -6,7 +6,7 @@ namespace ClapInfra.ClapModels.Entities
     }
     public interface IComponent<TBody>
     {
-        public TBody Body { get; }
+
     }
     public abstract class ClapBody<TBody>
         where TBody : ClapBody<TBody>

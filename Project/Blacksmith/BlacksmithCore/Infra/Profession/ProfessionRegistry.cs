@@ -40,7 +40,7 @@ namespace BlacksmithCore.Infra.Profession
             }
         }
         public static readonly Dictionary<string, HashSet<ISkillMetadata>> SkillMetadataDict = new();
-        private static readonly Dictionary<string, List<Type>> _modifierTypes = new();
+        private static readonly Dictionary<string, List<ProfessionModifier>> _modifierInstances = new();
 
         public static void RegistProfessionName(string professionName)
         {
@@ -91,22 +91,21 @@ namespace BlacksmithCore.Infra.Profession
 
         public static void RegistProfessionModifier(string targetName, ProfessionModifier modifier)
         {
-            if (!_modifierTypes.TryGetValue(targetName, out var list))
+            if (!_modifierInstances.TryGetValue(targetName, out var list))
             {
-                _modifierTypes[targetName] = list = new();
+                _modifierInstances[targetName] = list = new();
             }
-            list.Add(modifier.GetType());
+            list.Add(modifier);
         }
 
         public static void AddModOnInit(MainProfession package)
         {
-            if (_modifierTypes.TryGetValue(package.GetType().Name, out var types))
+            if (_modifierInstances.TryGetValue(package.GetType().Name, out var instances))
             {
-                foreach (var type in types)
+                foreach (var instance in instances)
                 {
-                    var modifier = (ProfessionModifier)Activator.CreateInstance(type)!;
+                    var modifier = (ProfessionModifier)instance.Copy();
                     package.AvailableSkillNames.UnionWith(modifier.AvailableSkillNames);
-                    modifier.Bind(package);
                     foreach (var kv in modifier.SkillChecker)
                     {
                         package.SkillChecker[kv.Key] = kv.Value;

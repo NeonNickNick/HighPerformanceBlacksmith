@@ -6,15 +6,10 @@ using ClapInfra.ClapModels.Entities;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
-    public class Defense : IComponent<Body>, IUpdatePerRound
+    public class Defense : IUpdatePerRound, IComponent<Body>
     {
         private List<DefenseEntity> _defenses = new();
         public IReadOnlyList<DefenseEntity> Defenses => _defenses;
-        public Body Body { get; }
-        public Defense(Body body)
-        {
-            Body = body;
-        }
         public void Copy(Defense origin)
         {
             _defenses.Clear();
