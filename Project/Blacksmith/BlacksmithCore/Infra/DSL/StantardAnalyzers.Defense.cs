@@ -1,5 +1,4 @@
 using BlacksmithCore.Infra.Attributes.Profession;
-using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
@@ -37,7 +36,7 @@ namespace BlacksmithCore.Infra.DSL
         [IsAnalyzer(AnalyzerType.Defense)]
         public static void MagicalImmunity(Community player, Community enemy, DefenseEntity defense, AttackAnalyzableData attackData)
         {
-            if(attackData.Type == AttackType.Instance.Magical())
+            if (attackData.Type == AttackType.Instance.Magical())
             {
                 var damage = attackData.Power;
                 attackData.Power = 0;

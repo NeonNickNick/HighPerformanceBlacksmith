@@ -1,39 +1,37 @@
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components;
-using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapUnit;
 using BlacksmithCore.Specific.BuiltInProfessions.CannonDSLExtension;
+using BlacksmithCore.Specific.Defense;
 
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
     using DSL = DSLforSkillLogic;
     using Pen = Func<DSLforSkillLogic.SourceFile, DSLforSkillLogic.SourceFile>;
-	namespace CannonDSLExtension
-	{
-		public static class Extension
-		{
-			public static DSL.AttackFile CompileTimeIncrease(this DSL.AttackFile af, Community self, string markName)
-			{
-				return af.WithComplieTime(last =>
-				{
-					var marks = self.Focus.Get<Effect>().Effects;
-					var t = marks.FindAll(m => m.AnalyzerKey == markName);
-					if (t == null)
-					{
-						return;
-					}
+    namespace CannonDSLExtension
+    {
+        public static class Extension
+        {
+            public static DSL.AttackFile CompileTimeIncrease(this DSL.AttackFile af, Community self, string markName)
+            {
+                return af.WithComplieTime(last =>
+                {
+                    var marks = self.Focus.Get<Effect>().Effects;
+                    var t = marks.FindAll(m => m.AnalyzerKey == markName);
+                    if (t == null)
+                    {
+                        return;
+                    }
                     last.Power += t.Count;
                     marks.RemoveAll(t.Contains);
-				});
-			}
-		}
-	}
-	public partial class Cannon : MainProfession
+                });
+            }
+        }
+    }
+    public partial class Cannon : MainProfession
     {
         private static bool StrikeCheck(ISkillContext sc)
         {
@@ -61,7 +59,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Iron())
                 .WriteAttack(8, AttackType.Instance.Physical())
-					.CompileTimeIncrease(sc.Self, nameof(TripleStrike));
+                    .CompileTimeIncrease(sc.Self, nameof(TripleStrike));
             return DSL.Create(sc.Self, pen);
         }
 
@@ -77,16 +75,16 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
                 .WriteAttack(11, AttackType.Instance.Physical())
-					.CompileTimeIncrease(sc.Self, nameof(TripleStrike))
-				.WriteResource(0.5f, ResourceType.Instance.Iron())
-				.AddMark(new()
-				{
-					AnalyzerKey = nameof(TripleStrike),
-					IsMark = true,
-					Type = EffectType.Instance.Default(),
-					Clock = new(isInfinite: true)
-				});
-			return DSL.Create(sc.Self, pen);
+                    .CompileTimeIncrease(sc.Self, nameof(TripleStrike))
+                .WriteResource(0.5f, ResourceType.Instance.Iron())
+                .AddMark(new()
+                {
+                    AnalyzerKey = nameof(TripleStrike),
+                    IsMark = true,
+                    Type = EffectType.Instance.Default(),
+                    Clock = new(isInfinite: true)
+                });
+            return DSL.Create(sc.Self, pen);
         }
 
         private static bool APShellCheck(ISkillContext sc)
@@ -100,8 +98,8 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
                 .WriteAttack(2, AttackType.Instance.Physical(), 3)
-					.CompileTimeIncrease(sc.Self, nameof(TripleStrike))
-					.WithInterupt();
+                    .CompileTimeIncrease(sc.Self, nameof(TripleStrike))
+                    .WithInterupt();
             return DSL.Create(sc.Self, pen);
         }
 
@@ -116,7 +114,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 .WriteAttack(1, AttackType.Instance.Physical())
                     .CompileTimeIncrease(sc.Self, nameof(TripleStrike));
 
-			return DSL.Create(sc.Self, pen);
+            return DSL.Create(sc.Self, pen);
         }
     }
 }

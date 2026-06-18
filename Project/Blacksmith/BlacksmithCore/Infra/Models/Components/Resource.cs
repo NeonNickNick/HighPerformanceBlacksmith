@@ -1,6 +1,5 @@
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Entities;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
@@ -9,7 +8,7 @@ namespace BlacksmithCore.Infra.Models.Components
     {
         private class ResourceTemplate
         {
-            public ResourceType.CEValue CommonType { get;}
+            public ResourceType.CEValue CommonType { get; }
             public ResourceType.CEValue GoldType { get; }
             public float Common { get; set; } = 0;
             public float Gold { get; set; } = 0;

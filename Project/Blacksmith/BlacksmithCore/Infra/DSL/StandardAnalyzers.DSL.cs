@@ -1,7 +1,6 @@
 using BlacksmithCore.Infra.Attributes.Profession;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
-using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
@@ -59,8 +58,8 @@ namespace BlacksmithCore.Infra.DSL
                     if (!ifHitArmor && armorList.Contains(defense.Type))
                     {
                         ifHitArmor = true;
-                        
-                        foreach(var key in onHitArmorFirstTimeKeys)
+
+                        foreach (var key in onHitArmorFirstTimeKeys)
                         {
                             AnalyzerRegistry.DSL.Get(key)(player, enemy, analyzableData);
                         }
@@ -120,7 +119,7 @@ namespace BlacksmithCore.Infra.DSL
                 };
             enemy.Focus.Get<TurnContext>().Get<ResourceAnalyzableData>().RemoveAll(r => interuptList.Contains(r.Type));
         }
-            
+
         [IsAnalyzer]
         public static void DefaultResource(Community player, Community enemy, IAnalyzableData analyzableData)
         {

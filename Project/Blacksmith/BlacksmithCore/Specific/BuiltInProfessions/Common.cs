@@ -10,7 +10,6 @@ using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapUnit;
 
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
@@ -164,27 +163,27 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [Labels(Impression.Aggressive, Strength.Super)]
         private static IDSLSourceFile Reflect(ISkillContext sc)
         {
-			Pen pen = sf => sf
+            Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Space())
                 .RegistCallbackOnJudge(
                     new()
                     {
-						new ModifierCallback()
+                        new ModifierCallback()
                         {
                             AnalyzerKey = nameof(ReflectBeforeApplyingEffect),
                             Stage = JudgeStage.Instance.OnApplyingEffect(),
                             Clock = new(),
                             IsPlayer = sc.Self.IsPlayer,
                             ModifierOrder = ModifierOrder.Before
-						},
+                        },
                         new ModifierCallback()
                         {
                             AnalyzerKey = nameof(ReflectAfterAttackCanceling),
                             Stage = JudgeStage.Instance.OnAttackCanceling(),
                             Clock = new(),
-							IsPlayer = sc.Self.IsPlayer,
-							ModifierOrder = ModifierOrder.After
-						}
+                            IsPlayer = sc.Self.IsPlayer,
+                            ModifierOrder = ModifierOrder.After
+                        }
                     });
             return DSL.Create(sc.Self, pen);
         }
@@ -193,7 +192,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             var playerAnalyzableDatas = player.Focus.Get<TurnContext>().Get<EffectAnalyzableData>();
             var enemyAnalyzableDatas = enemy.Focus.Get<TurnContext>().Get<EffectAnalyzableData>();
-            
+
             var reflect = enemyAnalyzableDatas.Where(e => e.TargetType == EffectTargetType.Instance.Enemy() || e.Clock.IsRinging).ToList();
 
             enemyAnalyzableDatas.RemoveAll(reflect.Contains);
@@ -210,8 +209,8 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             var tc = player.Focus.Get<TurnContext>();
             var playerAnalyzableDatas = tc.Get<AttackAnalyzableData>();
             var enemyAnalyzableDatas = enemy.Focus.Get<TurnContext>().Get<AttackAnalyzableData>();
-            
-			var reflect = enemyAnalyzableDatas.Where(a => a.Clock.IsRinging).ToList();
+
+            var reflect = enemyAnalyzableDatas.Where(a => a.Clock.IsRinging).ToList();
 
             enemyAnalyzableDatas.RemoveAll(reflect.Contains);
 

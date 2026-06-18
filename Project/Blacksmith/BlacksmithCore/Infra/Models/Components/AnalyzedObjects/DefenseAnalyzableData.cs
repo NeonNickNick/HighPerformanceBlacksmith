@@ -1,5 +1,5 @@
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Models.Components.AnalyzableDatas
 {

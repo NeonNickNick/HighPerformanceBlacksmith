@@ -1,9 +1,9 @@
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapJudgement.Core;
 
 namespace BlacksmithCore.Infra.Judgement.Core
 {
-    public class Intent : ClapIntent<Community>
+    public class Intent
     {
+        public required Action<Community> Execute { get; set; }
     }
 }

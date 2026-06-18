@@ -1,16 +1,16 @@
+using System.Collections;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
-using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Components;
-using ClapInfra.ClapModels.Entities;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
-    public interface IAnalyzableData : IClapAnalyzableData<Community>
-    {  
+    public interface IAnalyzableData
+    {
+        public ClapRoundClock Clock { get; init; }
+        public string AnalyzerKey { get; init; }
     }
-    public class TurnContext : ClapTurnContext<IAnalyzableData, Community>, IComponent<Body>, IUpdatePerRound
+    public class TurnContext : IComponent<Body>, IUpdatePerRound
     {
         private class Unit
         {
@@ -22,18 +22,63 @@ namespace BlacksmithCore.Infra.Models.Components
                 Clock = clock;
             }
         }
+        private Dictionary<Type, IList> _analyzableDataLists = new();
         private Dictionary<Type, List<Unit>> _preprocesses = new();
-        public TurnContext() : base(new()
+
+        public TurnContext()
         {
-            typeof(AttackAnalyzableData),
-            typeof(DefenseAnalyzableData),
-            typeof(ResourceAnalyzableData),
-            typeof(EffectAnalyzableData)
-        })
-        {
-            foreach (var key in _analyzableDataLists.Keys)
+            var types = new HashSet<Type>
             {
-                _preprocesses[key] = new();
+                typeof(AttackAnalyzableData),
+                typeof(DefenseAnalyzableData),
+                typeof(ResourceAnalyzableData),
+                typeof(EffectAnalyzableData)
+            };
+            foreach (var type in types)
+            {
+                Type listType = typeof(List<>).MakeGenericType(type);
+                _analyzableDataLists[type] = (IList)Activator.CreateInstance(listType)!;
+                _preprocesses[type] = new();
+            }
+        }
+
+        public List<TAnalyzableData> Get<TAnalyzableData>()
+            where TAnalyzableData : IAnalyzableData
+        {
+            if (_analyzableDataLists.TryGetValue(typeof(TAnalyzableData), out var list))
+            {
+                return (List<TAnalyzableData>)list;
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"AnalyzableData type {typeof(TAnalyzableData).Name} is not registered in the context.");
+            }
+        }
+        public virtual void WriteAnalyzableData(IAnalyzableData analyzableData)
+        {
+            if (analyzableData == null)
+            {
+                throw new ArgumentNullException(nameof(analyzableData));
+            }
+
+            var pp = _preprocesses[analyzableData.GetType()];
+            pp.ForEach(p =>
+            {
+                if (p.Clock.IsRinging)
+                {
+                    p.Action(analyzableData);
+                }
+            });
+
+            if (_analyzableDataLists.TryGetValue(analyzableData.GetType(), out var list))
+            {
+                list.Add(analyzableData);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"AnalyzableData type {analyzableData.GetType().Name} is not registered in the context.");
             }
         }
         public void Copy(TurnContext origin)
@@ -44,9 +89,9 @@ namespace BlacksmithCore.Infra.Models.Components
             }
             var attack = Get<AttackAnalyzableData>();
             attack.Clear();
-            foreach(var a in origin.Get<AttackAnalyzableData>())
+            foreach (var a in origin.Get<AttackAnalyzableData>())
             {
-                attack.Add(new() 
+                attack.Add(new()
                 {
                     AnalyzerKey = a.AnalyzerKey,
                     Clock = a.Clock.Copy(),
@@ -67,7 +112,7 @@ namespace BlacksmithCore.Infra.Models.Components
                 {
                     AnalyzerKey = a.AnalyzerKey,
                     Clock = a.Clock.Copy(),
-                    Defense = a.Defense,  //权宜之计 
+                    Defense = a.Defense,  //权宜之计
                     Power = a.Power,
                 });
             }
@@ -128,18 +173,6 @@ namespace BlacksmithCore.Infra.Models.Components
                     list[i].Clock.RoundPass();
                 }
             }
-        }
-        public override void WriteAnalyzableData(IAnalyzableData analyzableData)
-        {
-            var pp = _preprocesses[analyzableData.GetType()];
-            pp.ForEach(p =>
-            {
-                if (p.Clock.IsRinging)
-                {
-                    p.Action(analyzableData);
-                }
-            });
-            base.WriteAnalyzableData(analyzableData);
         }
 
         public List<(string name, int delayRounds, int power)> GetFutureDefenseView()

@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Runtime.InteropServices;
-using BlacksmithCore.Infra.Attributes.Profession;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
@@ -28,7 +24,8 @@ namespace BlacksmithCore.Infra.DSL
         public void Regist<TDelegate>(string key, TDelegate @delegate)
             where TDelegate : Delegate
         {
-            if(!_analyzerDict.TryGetValue(typeof(TDelegate), out var _)){
+            if (!_analyzerDict.TryGetValue(typeof(TDelegate), out var _))
+            {
                 _analyzerDict[typeof(TDelegate)] = new();
             }
             _analyzerDict[typeof(TDelegate)][key] = @delegate;

@@ -1,5 +1,4 @@
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Entities;
 
 namespace BlacksmithCore.Infra.Models.Components
 {

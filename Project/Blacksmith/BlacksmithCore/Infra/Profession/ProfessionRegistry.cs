@@ -71,7 +71,7 @@ namespace BlacksmithCore.Infra.Profession
                 {
                     continue;
                 }
-                
+
                 // 直接覆盖
                 SkillMetadataDict[info.Name.ToLower()] = new();
                 var metadatas = info.GetCustomAttributes();

@@ -3,7 +3,6 @@ using BlacksmithCore.Infra.Judgement;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using ClapInfra.ClapModels.Components;
 
 namespace BlacksmithCore.Driver
 {
@@ -114,7 +113,7 @@ namespace BlacksmithCore.Driver
         {
             GameInstance res = GameInstancePool.RentWithDiagnostic();
             res.Copy(this);
-            
+
             return res;
         }
 

@@ -1,7 +1,6 @@
 using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Components;
 
 namespace BlacksmithServer.Web.Realtime
 {

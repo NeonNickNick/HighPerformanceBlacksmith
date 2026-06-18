@@ -1,13 +1,11 @@
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components;
-using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
 using BlacksmithCore.Specific.BuiltInProfessions.BloodSigilDSLExtension;
-using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
+using BlacksmithCore.Specific.Defense;
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
     using DSL = DSLforSkillLogic;

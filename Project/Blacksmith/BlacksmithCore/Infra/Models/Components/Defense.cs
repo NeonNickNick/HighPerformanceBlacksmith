@@ -1,8 +1,6 @@
-using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapModels.Entities;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
@@ -13,7 +11,7 @@ namespace BlacksmithCore.Infra.Models.Components
         public void Copy(Defense origin)
         {
             _defenses.Clear();
-            foreach(var defense in origin._defenses)
+            foreach (var defense in origin._defenses)
             {
                 //权宜之计
                 _defenses.Add(new CommonReduction()

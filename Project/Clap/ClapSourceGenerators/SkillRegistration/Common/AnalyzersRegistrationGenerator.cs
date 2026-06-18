@@ -52,12 +52,9 @@ namespace ClapSourceGenerators.SkillRegistration.Common
             if (symbol is not { IsAbstract: false })
                 return null;
 
-            var baseType = FindClapSkillPackageBase(symbol);
-            if (baseType is not { TypeArguments.Length: 2 })
+            var baseType = FindSkillPackageBase(symbol);
+            if (baseType == null)
                 return null;
-
-            var skillContextType = baseType.TypeArguments[0];
-            var dslSourceFileType = baseType.TypeArguments[1];
 
             var packageKind = DeterminePackageKind(symbol);
 
@@ -122,14 +119,14 @@ namespace ClapSourceGenerators.SkillRegistration.Common
                 diagnostics);
         }
 
-        private static INamedTypeSymbol? FindClapSkillPackageBase(INamedTypeSymbol type)
+        private static INamedTypeSymbol? FindSkillPackageBase(INamedTypeSymbol type)
         {
             var current = type.BaseType;
             while (current != null)
             {
-                if (current.Name == "ClapSkillPackage" &&
-                    current.TypeArguments.Length == 2 &&
-                    current.ContainingNamespace.ToDisplayString() == "ClapInfra.ClapProfession")
+                if (current.Name == "SkillPackageBase" &&
+                    current.TypeArguments.Length == 0 &&
+                    current.ContainingNamespace.ToDisplayString() == "BlacksmithCore.Infra.Profession")
                     return current;
                 current = current.BaseType;
             }

@@ -1,6 +1,5 @@
 using BlacksmithCore.Infra.Judgement.Core;
-using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Judgement
 {

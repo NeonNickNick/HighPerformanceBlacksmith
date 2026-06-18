@@ -4,8 +4,6 @@ using BlacksmithCore.Infra.Attributes.BlacksmithEnum;
 using BlacksmithCore.Infra.Attributes.Profession;
 using BlacksmithCore.Infra.Enum;
 using BlacksmithCore.Infra.Profession;
-using ClapInfra.ClapEnum;
-using ClapInfra.ClapUtils;
 namespace BlacksmithCore.Infra.Utils
 {
     public static class ModLoader
@@ -121,7 +119,7 @@ namespace BlacksmithCore.Infra.Utils
         private static void LoadBlacksmithEnumModifiers()
         {
             _dllLoader.LoadStaticByAttribute(typeof(IsBlacksmithEnumModifier), ProcessBlacksmithEnumModifiers);
-            ClapEnum.CloseFactory();
+            BlacksmithEnumBase.CloseFactory();
         }
         private static void ProcessBlacksmithEnumModifiers(Type type)
         {

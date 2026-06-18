@@ -6,10 +6,9 @@ using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using BlacksmithCore.Infra.Models.Particular;
 using BlacksmithCore.Infra.Profession;
+using BlacksmithCore.Infra.Utils;
 using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapUnit;
 
 namespace ModExamples.MonkMod
 {

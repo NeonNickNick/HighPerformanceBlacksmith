@@ -1,7 +1,6 @@
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Entities;
 namespace BlacksmithCore.Infra.Models.Components
 {
     public class Effect : IUpdatePerRound, IComponent<Body>
@@ -11,7 +10,7 @@ namespace BlacksmithCore.Infra.Models.Components
         public void Copy(Effect origin)
         {
             _effects.Clear();
-            foreach(var effect in origin._effects)
+            foreach (var effect in origin._effects)
             {
                 _effects.Add(new()
                 {

@@ -1,37 +1,50 @@
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
+using BlacksmithCore.Infra.Utils;
 using BlacksmithCore.Specific.BuiltInProfessions;
-using ClapInfra.ClapModels.Components;
-using ClapInfra.ClapModels.Entities;
-using ClapInfra.ClapUnit;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
-    public class PackageContainer : ClapPackageContainer<MainProfession>
+    public enum SkillDeclareResult
     {
+        Success,
+        Illegal,
+        Rejected
+    }
+    public class PackageContainer
+    {
+        public string Name { get; }
+        public MainProfession SkillPackage { get; }
         public ClapSharedFlag Flag { get; set; } = new();
-        public PackageContainer(MainProfession skillpackage) : base(skillpackage)
+        public PackageContainer(MainProfession skillpackage)
         {
+            Name = skillpackage.GetType().Name;
+            SkillPackage = skillpackage;
         }
     }
     public class Skill :
-        ClapSkill<PackageContainer, MainProfession, ISkillContext, IDSLSourceFile>,
         IComponent<Body>
     {
-        protected override List<PackageContainer> _packages { get; set; } = new() { new(new Common()) };
+        protected List<PackageContainer> _packages = new() { new(new Common()) };
         public bool HaveProfession => _packages.Count > 1;
-        public void Copy(Skill origin)
+        public virtual void AddPackage(PackageContainer package)
         {
-            _packages.Clear();
-            foreach(var pc in origin._packages)
-            {
-                var p = (MainProfession)(pc.SkillPackage).Copy();
-                var n = new PackageContainer(p);
-                _packages.Add(n);//权宜之计
-            }
+            _packages.Add(package);
         }
-        public override SkillDeclareResult TryDeclare(string skillName, ISkillContext sc)
+        public virtual void RemovePackage(string name)
+        {
+            _packages.RemoveAll(p => p.Name == name);
+        }
+        public virtual void AddSkill(string packageName, string skillName)
+        {
+            _packages.Find(p => p.Name == packageName)?.SkillPackage.AvailableSkillNames.Add(skillName.ToLower());
+        }
+        public virtual void RemoveSkill(string packageName, string skillName)
+        {
+            _packages.Find(p => p.Name == packageName)?.SkillPackage.AvailableSkillNames.Remove(skillName.ToLower());
+        }
+        public virtual SkillDeclareResult TryDeclare(string skillName, ISkillContext sc)
         {
             foreach (var package in _packages.Where(p => p.Flag.IsActive))
             {
@@ -50,7 +63,7 @@ namespace BlacksmithCore.Infra.Models.Components
             }
             return SkillDeclareResult.Illegal;
         }
-        public override IDSLSourceFile Declare(string skillName, ISkillContext sc)
+        public virtual IDSLSourceFile Declare(string skillName, ISkillContext sc)
         {
             foreach (var package in _packages.Where(p => p.Flag.IsActive))
             {
@@ -62,19 +75,29 @@ namespace BlacksmithCore.Infra.Models.Components
             }
             throw new ArgumentException("Unreachable1!");
         }
-        public override List<string> GetAvailableSkillNames()
+        public virtual List<string> GetAvailableSkillNames()
         {
             return _packages
                 .Where(p => p.Flag.IsActive)
                 .SelectMany(p => p.SkillPackage.AvailableSkillNames)
                 .ToList();
         }
-        public override List<string> GetActivePackageNames()
+        public virtual List<string> GetActivePackageNames()
         {
             return _packages
                 .Where(p => p.Flag.IsActive)
                 .Select(p => p.Name)
                 .ToList();
+        }
+        public void Copy(Skill origin)
+        {
+            _packages.Clear();
+            foreach (var pc in origin._packages)
+            {
+                var p = (MainProfession)(pc.SkillPackage).Copy();
+                var n = new PackageContainer(p);
+                _packages.Add(n);//权宜之计
+            }
         }
         public HashSet<string> DisableAll()
         {

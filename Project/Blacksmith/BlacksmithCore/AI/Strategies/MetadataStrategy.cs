@@ -2,7 +2,6 @@ using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Profession;
-using ClapInfra.ClapModels.Components;
 
 
 namespace BlacksmithCore.AI.Strategies

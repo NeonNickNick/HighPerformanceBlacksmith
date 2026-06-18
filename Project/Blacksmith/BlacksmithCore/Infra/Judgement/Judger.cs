@@ -1,21 +1,28 @@
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Judgement.Core;
-using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapJudgement;
 
 namespace BlacksmithCore.Infra.Judgement
 {
-    public class Judger : ClapJudger<Community, Judger, JudgeRuleManager, Intent, IDSLSourceFile, IAnalyzableData>
+    public class Judger
     {
-        public Judger(Community player, Community enemy) : base(player, enemy)
+        public Community Player { get; protected set; }
+        public Community Enemy { get; protected set; }
+        public JudgeRuleManager JudgeRuleManager { get; }
+
+        public Judger(Community player, Community enemy)
         {
+            Player = player;
+            Enemy = enemy;
+            JudgeRuleManager = new();
         }
+
         public void Copy(Judger origin)
         {
             JudgeRuleManager.Copy(origin.JudgeRuleManager);
         }
-        protected override IEnumerable<Intent> Compile(IEnumerable<IDSLSourceFile> sourceFiles)
+
+        protected virtual IEnumerable<Intent> Compile(IEnumerable<IDSLSourceFile> sourceFiles)
         {
             int? totalCount = (sourceFiles as ICollection<IDSLSourceFile>)?.Count;
             var passives = new List<IDSLSourceFile>(totalCount ?? 4);
@@ -54,6 +61,19 @@ namespace BlacksmithCore.Infra.Judgement
             }
 
             return result;
+        }
+
+        public virtual void Judge(IEnumerable<IDSLSourceFile> playerSfs, IEnumerable<IDSLSourceFile> enemySfs)
+        {
+            foreach (var temp in Compile(playerSfs))
+            {
+                temp.Execute(Player);
+            }
+            foreach (var temp in Compile(enemySfs))
+            {
+                temp.Execute(Enemy);
+            }
+            JudgeRuleManager.Judge(Player, Enemy);
         }
     }
 }

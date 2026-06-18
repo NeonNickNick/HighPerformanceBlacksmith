@@ -1,38 +1,37 @@
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components;
-using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 using BlacksmithCore.Specific.BuiltInProfessions.DriverDSLExtension;
+using BlacksmithCore.Specific.Defense;
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
     using DSL = DSLforSkillLogic;
     using Pen = Func<DSLforSkillLogic.SourceFile, DSLforSkillLogic.SourceFile>;
-	namespace DriverDSLExtension
-	{
-		public static class Extension
-		{
-			public static DSL.AttackFile CompileTimeIncrease(this DSL.AttackFile af, Community self, string markName)
-			{
-				return af.WithComplieTime(last =>
-				{
-					var marks = self.Focus.Get<Effect>().Effects;
-					var t = marks.FindAll(m => m.AnalyzerKey == markName);
-					if (t == null)
-					{
-						return;
-					}
-					last.Power += t.Count;
-					marks.RemoveAll(t.Contains);
-				});
-			}
-		}
-	}
-	public partial class Driver : MainProfession
+    namespace DriverDSLExtension
+    {
+        public static class Extension
+        {
+            public static DSL.AttackFile CompileTimeIncrease(this DSL.AttackFile af, Community self, string markName)
+            {
+                return af.WithComplieTime(last =>
+                {
+                    var marks = self.Focus.Get<Effect>().Effects;
+                    var t = marks.FindAll(m => m.AnalyzerKey == markName);
+                    if (t == null)
+                    {
+                        return;
+                    }
+                    last.Power += t.Count;
+                    marks.RemoveAll(t.Contains);
+                });
+            }
+        }
+    }
+    public partial class Driver : MainProfession
     {
         private readonly ClapStateVar<int> _pending = new(0);
         private int AttackPower(int basePower)
@@ -83,13 +82,13 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 .UseResource(1, ResourceType.Instance.Space())
                 .WriteResource(1, ResourceType.Instance.Time())
                 .WriteDefense(3, new RealReduction())
-                .AddMark(new() 
-                { 
+                .AddMark(new()
+                {
                     AnalyzerKey = nameof(Space2Time),
-					IsMark = true,
-					Type = EffectType.Instance.Default(),
-					Clock = new(isInfinite: true)
-				});
+                    IsMark = true,
+                    Type = EffectType.Instance.Default(),
+                    Clock = new(isInfinite: true)
+                });
             return DSL.Create(sc.Self, pen);
         }
 
@@ -107,14 +106,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 .UseResource(1, ResourceType.Instance.Time())
                 .WriteResource(1, ResourceType.Instance.Space())
                 .WriteDefense(3, new RealReduction())
-				.AddMark(new()
-				{
-					AnalyzerKey = nameof(Space2Time),
-					IsMark = true,
-					Type = EffectType.Instance.Default(),
-					Clock = new(isInfinite: true)
-				});
-			return DSL.Create(sc.Self, pen);
+                .AddMark(new()
+                {
+                    AnalyzerKey = nameof(Space2Time),
+                    IsMark = true,
+                    Type = EffectType.Instance.Default(),
+                    Clock = new(isInfinite: true)
+                });
+            return DSL.Create(sc.Self, pen);
         }
 
         private static bool SpaceBarrierCheck(ISkillContext sc)

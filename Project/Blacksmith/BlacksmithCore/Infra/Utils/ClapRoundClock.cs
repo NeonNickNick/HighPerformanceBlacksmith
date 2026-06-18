@@ -1,5 +1,4 @@
-
-namespace ClapInfra.ClapUnit
+namespace BlacksmithCore.Infra.Utils
 {
     public class ClapRoundClock
     {

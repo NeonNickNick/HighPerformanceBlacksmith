@@ -1,7 +1,5 @@
-using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Core;
-using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 namespace BlacksmithCore.Infra.Models.Components.AnalyzedObjects
 {
     public abstract class DefenseEntity : IAnalyzableData
@@ -17,7 +15,7 @@ namespace BlacksmithCore.Infra.Models.Components.AnalyzedObjects
         public virtual void Update()
         {
             Clock.RoundPass();
-            if(Power <= 0)
+            if (Power <= 0)
             {
                 Clock.Kill();
             }

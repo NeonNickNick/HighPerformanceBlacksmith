@@ -5,12 +5,11 @@ using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapJudgement;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Judgement
 {
-    public class JudgeRuleManager : ClapJudgeRuleManager<Community, IAnalyzableData>
+    public class JudgeRuleManager
     {
         public class StageRuleContainer
         {
@@ -32,9 +31,9 @@ namespace BlacksmithCore.Infra.Judgement
             {
                 //基础规则不需要拷贝，拷贝三个列表即可
                 _overrideRules.Clear();
-                foreach(var rule in origin._overrideRules)
+                foreach (var rule in origin._overrideRules)
                 {
-                    _overrideRules.Add(new() 
+                    _overrideRules.Add(new()
                     {
                         AnalyzerKey = rule.AnalyzerKey,
                         Clock = rule.Clock.Copy(),
@@ -115,7 +114,7 @@ namespace BlacksmithCore.Infra.Judgement
                         }
                     }
                     // 核心规则
-                    if(overrideRule == null)
+                    if (overrideRule == null)
                     {
                         _baseRule(player, enemy);
                     }
@@ -129,7 +128,7 @@ namespace BlacksmithCore.Infra.Judgement
                         {
                             AnalyzerRegistry.JudgeCallback.Get(overrideRule.AnalyzerKey)(enemy, player);
                         }
-                    }                    
+                    }
                     // AFTER modifiers
                     foreach (var rule in _modifiersAfter)
                     {
@@ -190,7 +189,7 @@ namespace BlacksmithCore.Infra.Judgement
         };
         public void Copy(JudgeRuleManager origin)
         {
-            foreach(var key in _ruleContainers.Keys)
+            foreach (var key in _ruleContainers.Keys)
             {
                 _ruleContainers[key].Copy(origin._ruleContainers[key]);
             }
@@ -300,7 +299,7 @@ namespace BlacksmithCore.Infra.Judgement
             enemy.Update();
         }
         #endregion
-        public override void Judge(Community player, Community enemy)
+        public void Judge(Community player, Community enemy)
         {
             foreach (var stage in _ruleContainers)
             {

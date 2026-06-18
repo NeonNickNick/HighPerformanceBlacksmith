@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ClapInfra.ClapUtils
+namespace BlacksmithCore.Infra.Utils
 {
     public class DllLoader
     {

@@ -1,12 +1,10 @@
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
-using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Specific.Defense
 {
-    using DSL = DSLforSkillLogic;
     public class ThornReduction : DefenseEntity
     {
         public override string AnalyzerKey { get; init; } = nameof(StandardAnalyzers.ThornReduction);

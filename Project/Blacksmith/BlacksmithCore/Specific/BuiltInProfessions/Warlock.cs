@@ -53,8 +53,8 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             Pen pen = sf => sf
                .WriteEffect(
-               EffectType.Instance.AfterTransport(), 
-               EffectTargetType.Instance.Enemy(), 
+               EffectType.Instance.AfterTransport(),
+               EffectTargetType.Instance.Enemy(),
                new(),
                nameof(MuteEffectAnalyzer));
             return DSL.Create(sc.Self, pen);
@@ -62,8 +62,8 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [IsAnalyzer]
         private static void MuteEffectAnalyzer(Community player, Community enemy, IAnalyzableData analyzableData)
         {
-			enemy.Focus.Get<TurnContext>().Get<ResourceAnalyzableData>().RemoveAll(r => r.Type == ResourceType.Instance.Space() || r.Type == ResourceType.Instance.Time());
-		}
+            enemy.Focus.Get<TurnContext>().Get<ResourceAnalyzableData>().RemoveAll(r => r.Type == ResourceType.Instance.Space() || r.Type == ResourceType.Instance.Time());
+        }
         private static bool SacrificeCheck(ISkillContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 1;

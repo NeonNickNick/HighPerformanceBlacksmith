@@ -3,7 +3,6 @@ using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapModels.Components;
 
 
 namespace BlacksmithCore.AI.Strategies

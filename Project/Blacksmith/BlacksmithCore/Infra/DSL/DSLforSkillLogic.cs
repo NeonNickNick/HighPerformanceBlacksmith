@@ -5,7 +5,7 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
-using ClapInfra.ClapUnit;
+using BlacksmithCore.Infra.Utils;
 namespace BlacksmithCore.Infra.DSL
 {
     using Pen = Func<DSLforSkillLogic.SourceFile, DSLforSkillLogic.SourceFile>;
@@ -20,7 +20,7 @@ namespace BlacksmithCore.Infra.DSL
             Recovery,
             Free
         }
-       
+
         public class SourceFile : IDSLSourceFile
         {
             protected enum StructureType
@@ -129,7 +129,7 @@ namespace BlacksmithCore.Infra.DSL
             }
             public DefenseFile WriteDefense(
                 int power,
-                DefenseEntity defense, 
+                DefenseEntity defense,
                 int delayRounds = 0,
                 string analyzerKey = nameof(StandardAnalyzers.DefaultDefense)
             )
@@ -255,7 +255,7 @@ namespace BlacksmithCore.Infra.DSL
                 return this;
             }
             public AttackFile WithRuntime(
-                AttackStage.CEValue stage, 
+                AttackStage.CEValue stage,
                 string analyzerKey
             )
             {
@@ -267,7 +267,7 @@ namespace BlacksmithCore.Infra.DSL
                         return;
                     }
                     var last = list[^1];
-                    if(!last.StageKeys.TryGetValue(stage, out var _))
+                    if (!last.StageKeys.TryGetValue(stage, out var _))
                     {
                         last.StageKeys[stage] = new();
                     }
@@ -277,17 +277,17 @@ namespace BlacksmithCore.Infra.DSL
             }
             public AttackFile WithBloodSuck(float percent)
             {
-                return 
+                return
                      WithComplieTime(last => last.ExtraParams[nameof(StandardAnalyzers.DefaultBloodSuck)] = percent)
                     .WithRuntime(
-                    AttackStage.Instance.OnEnd(), 
+                    AttackStage.Instance.OnEnd(),
                     nameof(StandardAnalyzers.DefaultBloodSuck));
             }
             public AttackFile WithInterupt()
             {
-                
+
                 return WithRuntime(
-                    AttackStage.Instance.OnHitArmorFirstTime(), 
+                    AttackStage.Instance.OnHitArmorFirstTime(),
                     nameof(StandardAnalyzers.DefaultInterupt));
             }
             public AttackFile(SourceFile self) : base(self)

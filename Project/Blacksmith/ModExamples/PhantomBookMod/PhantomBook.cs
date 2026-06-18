@@ -8,7 +8,6 @@ using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Specific.Defense;
-using ClapInfra.ClapModels.Components;
 using ModExamples.PhantomBookMod.Defense;
 
 namespace ModExamples.PhantomBookMod

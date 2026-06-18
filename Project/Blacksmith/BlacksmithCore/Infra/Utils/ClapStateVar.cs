@@ -1,4 +1,4 @@
-namespace ClapInfra.ClapUnit
+namespace BlacksmithCore.Infra.Utils
 {
     public class ClapStateVar<T>
         where T : struct
