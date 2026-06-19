@@ -3,7 +3,7 @@ using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Models.Components.AnalyzableDatas
 {
-    public class EffectEntity : IAnalyzableData
+    public partial class EffectEntity : IAnalyzableData
     {
         public required string AnalyzerKey { get; init; }
         public bool IsMark { get; set; }

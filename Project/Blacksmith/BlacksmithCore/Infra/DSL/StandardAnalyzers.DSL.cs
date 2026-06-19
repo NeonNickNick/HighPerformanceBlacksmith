@@ -1,4 +1,4 @@
-using BlacksmithCore.Infra.Attributes.Profession;
+using BlacksmithCore.Infra.Attributes.Analyzer;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
@@ -132,7 +132,6 @@ namespace BlacksmithCore.Infra.DSL
         {
             var defenseData = (DefenseAnalyzableData)analyzableData;
 
-            defenseData.Defense.Power = defenseData.Power;
             player.Focus.Get<Defense>().Add(defenseData.Defense);
         }
     }

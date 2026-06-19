@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ClapSourceGenerators.SkillRegistration.Common
+namespace ClapSourceGenerators.SkillRegistration
 {
     [Generator]
     public class AnalyzersRegistrationGenerator : IIncrementalGenerator
@@ -30,7 +30,7 @@ namespace ClapSourceGenerators.SkillRegistration.Common
             title: "Duplicate analyzer name within same package kind",
             messageFormat: "Analyzer method '{0}' in package kind '{1}' has the same name as '{2}' declared earlier. Analyzer names must be unique within the same package kind.",
             category: "ClapAnalyzerRegistration",
-            defaultSeverity: DiagnosticSeverity.Warning,
+            defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -79,7 +79,7 @@ namespace ClapSourceGenerators.SkillRegistration.Common
                     continue;
 
                 var isAnalyzerAttr = method.GetAttributes().FirstOrDefault(a =>
-                    a.AttributeClass?.ToDisplayString() == "BlacksmithCore.Infra.Attributes.Profession.IsAnalyzer");
+                    a.AttributeClass?.ToDisplayString() == "BlacksmithCore.Infra.Attributes.Analyzer.IsAnalyzer");
 
                 if (isAnalyzerAttr == null)
                     continue;
@@ -362,80 +362,79 @@ namespace ClapSourceGenerators.SkillRegistration.Common
             sb.AppendLine("}");
             return sb.ToString();
         }
-    }
-
-    internal enum AnalyzerTypeKind
-    {
-        DSL = 0,
-        Defense = 1,
-        JudgeCallback = 2,
-        Universal = 3
-    }
-
-    internal enum PackageKind
-    {
-        MainProfession,
-        Modifier,
-        Other
-    }
-
-    internal enum AnalyzerDiagnosticKind
-    {
-        WrongReturnType,
-        WrongParameterSignature
-    }
-
-    internal sealed class AnalyzerDiagnosticInfo
-    {
-        public AnalyzerDiagnosticKind Kind { get; }
-        public Location? Location { get; }
-        public string[] Args { get; }
-
-        public AnalyzerDiagnosticInfo(AnalyzerDiagnosticKind kind, Location? location, params string[] args)
+        internal enum AnalyzerTypeKind
         {
-            Kind = kind;
-            Location = location;
-            Args = args;
+            DSL = 0,
+            Defense = 1,
+            JudgeCallback = 2,
+            Universal = 3
         }
-    }
 
-    internal sealed class AnalyzerMethodInfo
-    {
-        public string MethodName { get; }
-        public AnalyzerTypeKind AnalyzerType { get; }
-        public Location? Location { get; }
-
-        public AnalyzerMethodInfo(string methodName, AnalyzerTypeKind analyzerType, Location? location)
+        internal enum PackageKind
         {
-            MethodName = methodName;
-            AnalyzerType = analyzerType;
-            Location = location;
+            MainProfession,
+            Modifier,
+            Other
         }
-    }
 
-    internal sealed class AnalyzerPackageInfo
-    {
-        public string ClassName { get; }
-        public string Namespace { get; }
-        public string FilePath { get; }
-        public PackageKind PackageKind { get; }
-        public List<AnalyzerMethodInfo> AnalyzerMethods { get; }
-        public List<AnalyzerDiagnosticInfo> Diagnostics { get; }
-
-        public AnalyzerPackageInfo(
-            string className,
-            string @namespace,
-            string filePath,
-            PackageKind packageKind,
-            List<AnalyzerMethodInfo> analyzerMethods,
-            List<AnalyzerDiagnosticInfo> diagnostics)
+        internal enum AnalyzerDiagnosticKind
         {
-            ClassName = className;
-            Namespace = @namespace;
-            FilePath = filePath;
-            PackageKind = packageKind;
-            AnalyzerMethods = analyzerMethods;
-            Diagnostics = diagnostics;
+            WrongReturnType,
+            WrongParameterSignature
+        }
+
+        internal sealed class AnalyzerDiagnosticInfo
+        {
+            public AnalyzerDiagnosticKind Kind { get; }
+            public Location? Location { get; }
+            public string[] Args { get; }
+
+            public AnalyzerDiagnosticInfo(AnalyzerDiagnosticKind kind, Location? location, params string[] args)
+            {
+                Kind = kind;
+                Location = location;
+                Args = args;
+            }
+        }
+
+        internal sealed class AnalyzerMethodInfo
+        {
+            public string MethodName { get; }
+            public AnalyzerTypeKind AnalyzerType { get; }
+            public Location? Location { get; }
+
+            public AnalyzerMethodInfo(string methodName, AnalyzerTypeKind analyzerType, Location? location)
+            {
+                MethodName = methodName;
+                AnalyzerType = analyzerType;
+                Location = location;
+            }
+        }
+
+        internal sealed class AnalyzerPackageInfo
+        {
+            public string ClassName { get; }
+            public string Namespace { get; }
+            public string FilePath { get; }
+            public PackageKind PackageKind { get; }
+            public List<AnalyzerMethodInfo> AnalyzerMethods { get; }
+            public List<AnalyzerDiagnosticInfo> Diagnostics { get; }
+
+            public AnalyzerPackageInfo(
+                string className,
+                string @namespace,
+                string filePath,
+                PackageKind packageKind,
+                List<AnalyzerMethodInfo> analyzerMethods,
+                List<AnalyzerDiagnosticInfo> diagnostics)
+            {
+                ClassName = className;
+                Namespace = @namespace;
+                FilePath = filePath;
+                PackageKind = packageKind;
+                AnalyzerMethods = analyzerMethods;
+                Diagnostics = diagnostics;
+            }
         }
     }
 }

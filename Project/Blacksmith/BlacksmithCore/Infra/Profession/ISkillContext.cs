@@ -10,15 +10,15 @@ namespace BlacksmithCore.Infra.Profession
         public Community Self { get; }
         public int Param { get; }
         public string StringParam { get; }
+        public (string SkillName, int Param, string StringParam) History { get; }
     }
     public interface ISudoOperations
     {
         public GameInstance DeepCopy();
-        public bool IsPlayer(Community community);
-        public IReadOnlyList<(ISkillContext, ISkillContext)> SkillHistory { get; }
-        public IGameMetadata GameMetadata { get; }
+        public IReadOnlyList<((string SkillName, int Param, string StringParam), (string SkillName, int Param, string StringParam))> SkillHistory { get; }
+        public ICompileTimeMetadata CompileTimeMetadata { get; }
     }
-    public interface IGameMetadata
+    public interface ICompileTimeMetadata
     {
         public IReadOnlySet<string> MainProfessionSkillNames { get; }
         public IReadOnlySet<string> EquipmentSkillNames { get; }

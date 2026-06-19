@@ -7,7 +7,6 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
 using ModExamples.PhantomBookMod.Defense;
 
 namespace ModExamples.PhantomBookMod

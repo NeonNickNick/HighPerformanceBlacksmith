@@ -1,5 +1,5 @@
 using System.Data;
-using BlacksmithCore.Infra.Attributes.Profession;
+using BlacksmithCore.Infra.Attributes.Analyzer;
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Judgement;
@@ -9,7 +9,6 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
 
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
@@ -81,7 +80,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             Pen pen = sf => sf
                 .UseResource(sc.Param * 0.5f, ResourceType.Instance.Iron())
-                .WriteDefense(2 + sc.Param, new CommonReduction());
+                .WriteDefense(new()
+                {
+                    Name = nameof(Shield),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.CommonReduction(),
+                    Power = 2 + sc.Param,
+                    Clock = new()
+                });
             return DSL.Create(sc.Self, pen);
         }
 
@@ -95,7 +101,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             Pen pen = sf => sf
                 .UseResource(1 + sc.Param * 0.5f, ResourceType.Instance.Iron())
-                .WriteDefense(4 + sc.Param, new ThornReduction());
+                .WriteDefense(new()
+                {
+                    Name = nameof(ThornShield),
+                    AnalyzerKey = nameof(StandardAnalyzers.ThornReduction),
+                    Type = DefenseType.Instance.ThornReduction(),
+                    Power = 4 + sc.Param,
+                    Clock = new()
+                });
             return DSL.Create(sc.Self, pen);
         }
 
@@ -253,7 +266,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Cannon()));
             Pen pen = sf => sf
                 .UseResource(4, ResourceType.Instance.Iron())
-                .WriteDefense(3, new CommonReduction())
+                .WriteDefense(new()
+                {
+                    Name = nameof(Cannon),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.CommonReduction(),
+                    Power = 3,
+                    Clock = new()
+                })
                 .WriteCompileTime(source =>
                 {
                     ExcludeAllProfessions(source);

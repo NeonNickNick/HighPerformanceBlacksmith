@@ -1,6 +1,6 @@
+using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Entites;
-using BlacksmithCore.Specific.Defense;
 
 namespace BlacksmithCore.Infra.Models.Components
 {
@@ -13,15 +13,7 @@ namespace BlacksmithCore.Infra.Models.Components
             _defenses.Clear();
             foreach (var defense in origin._defenses)
             {
-                //权宜之计
-                _defenses.Add(new CommonReduction()
-                {
-                    AnalyzerKey = defense.AnalyzerKey,
-                    Type = defense.Type,
-                    Power = defense.Power,
-                    Clock = defense.Clock.Copy(),
-                    CanMerge = defense.CanMerge,
-                });
+                _defenses.Add(defense.Copy());
             }
         }
         public void Update()
@@ -56,16 +48,13 @@ namespace BlacksmithCore.Infra.Models.Components
             {
                 return false;
             }
-            firstMatch.Merge(addition);
+            AnalyzerRegistry.Universal
+                .Get<Action<DefenseEntity, DefenseEntity>>(firstMatch.MergeKey)(firstMatch, addition);
             return true;
-        }
-        public void Init()
-        {
-            _defenses.Clear();
         }
         public List<(string name, int power)> GetView()
         {
-            return _defenses.Select(d => (d.GetType().Name, (int)d.Power)).ToList();
+            return _defenses.Select(d => (d.Name, d.Power)).ToList();
         }
     }
 }

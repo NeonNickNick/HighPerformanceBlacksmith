@@ -1,4 +1,4 @@
-using BlacksmithCore.Infra.Attributes.Profession;
+using BlacksmithCore.Infra.Attributes.Analyzer;
 using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
@@ -10,6 +10,11 @@ namespace BlacksmithCore.Infra.DSL
     using DSL = DSLforSkillLogic;
     public partial class StandardAnalyzers : MainProfession
     {
+        [IsAnalyzer(AnalyzerType.Universal)]
+        public static void DefaultMerge(DefenseEntity origin, DefenseEntity newD)
+        {
+
+        }
         [IsAnalyzer(AnalyzerType.Defense)]
         public static void DefaultArmor(Community player, Community enemy, DefenseEntity defense, AttackAnalyzableData attackData)
         {

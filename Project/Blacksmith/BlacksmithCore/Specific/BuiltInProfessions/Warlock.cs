@@ -1,4 +1,4 @@
-using BlacksmithCore.Infra.Attributes.Profession;
+using BlacksmithCore.Infra.Attributes.Analyzer;
 using BlacksmithCore.Infra.Attributes.SkillMetadata;
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Models.Components;
@@ -6,7 +6,6 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
-using BlacksmithCore.Specific.Defense;
 
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
@@ -76,7 +75,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .LoseHP(1)
                 .LoseMHP(1)
-                .WriteDefense(7, new RealReduction())
+                .WriteDefense(new()
+                {
+                    Name = nameof(Sacrifice),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = 7,
+                    Clock = new()
+                })
                 .WriteResource(1.5f, ResourceType.Instance.Iron());
             return DSL.Create(sc.Self, pen);
         }

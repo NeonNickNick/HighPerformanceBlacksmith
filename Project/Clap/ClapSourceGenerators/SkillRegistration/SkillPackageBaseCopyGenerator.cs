@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ClapSourceGenerators.SkillRegistration.BlacksmithOnly
+namespace ClapSourceGenerators.SkillRegistration
 {
     [Generator]
     public class SkillPackageBaseCopyGenerator : IIncrementalGenerator
@@ -95,19 +95,18 @@ namespace ClapSourceGenerators.SkillRegistration.BlacksmithOnly
             sb.AppendLine("}");
             return sb.ToString();
         }
-    }
-
-    internal sealed class PackageInfo
-    {
-        public string ClassName { get; }
-        public string Namespace { get; }
-        public string FilePath { get; }
-
-        public PackageInfo(string className, string @namespace, string filePath)
+        internal sealed class PackageInfo
         {
-            ClassName = className;
-            Namespace = @namespace;
-            FilePath = filePath;
+            public string ClassName { get; }
+            public string Namespace { get; }
+            public string FilePath { get; }
+
+            public PackageInfo(string className, string @namespace, string filePath)
+            {
+                ClassName = className;
+                Namespace = @namespace;
+                FilePath = filePath;
+            }
         }
     }
 }

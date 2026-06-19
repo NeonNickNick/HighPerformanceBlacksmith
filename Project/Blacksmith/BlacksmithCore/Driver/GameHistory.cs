@@ -1,13 +1,11 @@
-using BlacksmithCore.Infra.Profession;
-
 namespace BlacksmithCore.Driver
 {
     public class GameHistory
     {
-        public List<(ISkillContext, ISkillContext)> SkillHistory { get; set; } = new();
+        public List<((string SkillName, int Param, string StringParam), (string SkillName, int Param, string StringParam))> SkillHistory { get; set; } = new();
         public void Copy(GameHistory origin)
         {
-            //暂时可不写
+            SkillHistory = new(origin.SkillHistory);
         }
     }
 }

@@ -6,7 +6,6 @@ using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Infra.Utils;
 using BlacksmithCore.Specific.BuiltInProfessions.DriverDSLExtension;
-using BlacksmithCore.Specific.Defense;
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
     using DSL = DSLforSkillLogic;
@@ -48,8 +47,22 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         public override IDSLSourceFile PassiveSkillImpl(ISkillContext sc)
         {
             Pen pen = sf => sf
-                .WriteDefense(1, new RealReduction())
-                .WriteDefense((int)MathF.Min(5, sc.Self.Focus.Get<Resource>().Query(ResourceType.Instance.Time()) * 2), new RealReduction());
+                .WriteDefense(new()
+                {
+                    Name = nameof(Driver),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = 1,
+                    Clock = new()
+                })
+                .WriteDefense(new()
+                {
+                    Name = "TimeShield",
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = (int)MathF.Min(5, sc.Self.Focus.Get<Resource>().Query(ResourceType.Instance.Time()) * 2),
+                    Clock = new()
+                });
             return DSL.Create(sc.Self, pen);
         }
         private static bool SpaceAttackCheck(ISkillContext sc)
@@ -81,7 +94,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Space())
                 .WriteResource(1, ResourceType.Instance.Time())
-                .WriteDefense(3, new RealReduction())
+                .WriteDefense(new()
+                {
+                    Name = nameof(Space2Time),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = 3,
+                    Clock = new()
+                })
                 .AddMark(new()
                 {
                     AnalyzerKey = nameof(Space2Time),
@@ -105,7 +125,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Time())
                 .WriteResource(1, ResourceType.Instance.Space())
-                .WriteDefense(3, new RealReduction())
+                .WriteDefense(new()
+                {
+                    Name = nameof(Time2Space),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = 3,
+                    Clock = new()
+                })
                 .AddMark(new()
                 {
                     AnalyzerKey = nameof(Space2Time),
@@ -127,7 +154,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             Pen pen = sf => sf
                 .UseResource(sc.Param, ResourceType.Instance.Iron())
-                .WriteDefense((int)(5.5f * sc.Param - 0.5f * sc.Param * sc.Param), new RealReduction());
+                .WriteDefense(new()
+                {
+                    Name = nameof(SpaceBarrier),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.RealReduction(),
+                    Power = (int)(5.5f * sc.Param - 0.5f * sc.Param * sc.Param),
+                    Clock = new()
+                });
             return DSL.Create(sc.Self, pen);
         }
     }

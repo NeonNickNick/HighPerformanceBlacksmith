@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace ClapSourceGenerators.SkillRegistration.Common
+namespace ClapSourceGenerators.SkillRegistration
 {
     [Generator]
     public class SkillRegistrationGenerator : IIncrementalGenerator
@@ -233,57 +233,57 @@ namespace ClapSourceGenerators.SkillRegistration.Common
             sb.AppendLine("}");
             return sb.ToString();
         }
-    }
 
-    internal enum DiagnosticKind
-    {
-        WrongReturnType,
-        MissingGenerator
-    }
-
-    internal sealed class DiagnosticInfo
-    {
-        public DiagnosticKind Kind { get; }
-        public Location? Location { get; }
-        public string[] Args { get; }
-
-        public DiagnosticInfo(DiagnosticKind kind, Location? location, params string[] args)
+        internal enum DiagnosticKind
         {
-            Kind = kind;
-            Location = location;
-            Args = args;
+            WrongReturnType,
+            MissingGenerator
         }
-    }
 
-    internal sealed class PackageInfo
-    {
-        public string ClassName { get; }
-        public string Namespace { get; }
-        public string FilePath { get; }
-        public List<SkillMethodInfo> Skills { get; }
-        public List<DiagnosticInfo> Diagnostics { get; }
-
-        public PackageInfo(string className, string @namespace, string filePath, List<SkillMethodInfo> skills, List<DiagnosticInfo> diagnostics)
+        internal sealed class DiagnosticInfo
         {
-            ClassName = className;
-            Namespace = @namespace;
-            FilePath = filePath;
-            Skills = skills;
-            Diagnostics = diagnostics;
+            public DiagnosticKind Kind { get; }
+            public Location? Location { get; }
+            public string[] Args { get; }
+
+            public DiagnosticInfo(DiagnosticKind kind, Location? location, params string[] args)
+            {
+                Kind = kind;
+                Location = location;
+                Args = args;
+            }
         }
-    }
 
-    internal sealed class SkillMethodInfo
-    {
-        public string SkillName { get; }
-        public string CheckMethod { get; }
-        public string GeneratorMethod { get; }
-
-        public SkillMethodInfo(string skillName, string checkMethod, string generatorMethod)
+        internal sealed class PackageInfo
         {
-            SkillName = skillName;
-            CheckMethod = checkMethod;
-            GeneratorMethod = generatorMethod;
+            public string ClassName { get; }
+            public string Namespace { get; }
+            public string FilePath { get; }
+            public List<SkillMethodInfo> Skills { get; }
+            public List<DiagnosticInfo> Diagnostics { get; }
+
+            public PackageInfo(string className, string @namespace, string filePath, List<SkillMethodInfo> skills, List<DiagnosticInfo> diagnostics)
+            {
+                ClassName = className;
+                Namespace = @namespace;
+                FilePath = filePath;
+                Skills = skills;
+                Diagnostics = diagnostics;
+            }
+        }
+
+        internal sealed class SkillMethodInfo
+        {
+            public string SkillName { get; }
+            public string CheckMethod { get; }
+            public string GeneratorMethod { get; }
+
+            public SkillMethodInfo(string skillName, string checkMethod, string generatorMethod)
+            {
+                SkillName = skillName;
+                CheckMethod = checkMethod;
+                GeneratorMethod = generatorMethod;
+            }
         }
     }
 }

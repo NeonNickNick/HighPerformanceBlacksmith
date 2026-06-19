@@ -9,16 +9,17 @@ using BlacksmithCore.Infra.Utils;
 
 namespace BlacksmithCore.Infra.Judgement
 {
+    public partial class RuleUnit : IAnalyzableData
+    {
+        public required string AnalyzerKey { get; init; }
+        public required ClapRoundClock Clock { get; init; }
+        public required bool IsPlayer { get; init; }
+    }
     public class JudgeRuleManager
     {
         public class StageRuleContainer
         {
-            public class RuleUnit : IAnalyzableData
-            {
-                public required string AnalyzerKey { get; init; }
-                public required ClapRoundClock Clock { get; init; }
-                public required bool IsPlayer { get; init; }
-            }
+            
             private readonly Action<Community, Community> _baseRule;
             private readonly List<RuleUnit> _overrideRules = new();
             public readonly List<RuleUnit> _modifiersBefore = new();
@@ -33,32 +34,17 @@ namespace BlacksmithCore.Infra.Judgement
                 _overrideRules.Clear();
                 foreach (var rule in origin._overrideRules)
                 {
-                    _overrideRules.Add(new()
-                    {
-                        AnalyzerKey = rule.AnalyzerKey,
-                        Clock = rule.Clock.Copy(),
-                        IsPlayer = rule.IsPlayer,
-                    });
+                    _overrideRules.Add(rule.Copy());
                 }
                 _modifiersBefore.Clear();
                 foreach (var rule in origin._modifiersBefore)
                 {
-                    _overrideRules.Add(new()
-                    {
-                        AnalyzerKey = rule.AnalyzerKey,
-                        Clock = rule.Clock.Copy(),
-                        IsPlayer = rule.IsPlayer,
-                    });
+                    _overrideRules.Add(rule.Copy());
                 }
                 _modifiersAfter.Clear();
                 foreach (var rule in origin._modifiersAfter)
                 {
-                    _overrideRules.Add(new()
-                    {
-                        AnalyzerKey = rule.AnalyzerKey,
-                        Clock = rule.Clock.Copy(),
-                        IsPlayer = rule.IsPlayer,
-                    });
+                    _overrideRules.Add(rule.Copy());
                 }
             }
             public void AddOverride(RuleUnit ruleUnit)
@@ -311,7 +297,7 @@ namespace BlacksmithCore.Infra.Judgement
         {
             foreach (var callback in callbacks)
             {
-                StageRuleContainer.RuleUnit unit = new()
+                RuleUnit unit = new()
                 {
                     AnalyzerKey = callback.AnalyzerKey,
                     Clock = callback.Clock,

@@ -221,7 +221,9 @@ namespace BlacksmithCore.AI.Strategies
 
         public (string skillName, int param, string stringParam) ChooseSkill()
         {
+#if DEBUG
             var sw = Stopwatch.StartNew();
+#endif
 
             int threadCount = Math.Min(7, Environment.ProcessorCount);
             int iterationsPerThread = Math.Max(1, 7000 / threadCount);
@@ -264,10 +266,12 @@ namespace BlacksmithCore.AI.Strategies
 
             var result = SampleFromTopK(finalChildren, _main.History.SkillHistory.Count);
 
+#if DEBUG
             sw.Stop();
             Console.WriteLine(
                 $"[Adversarial] depth={_params.OpponentDepth} iter={_params.MctsIterations} "
                 + $"耗时={sw.ElapsedMilliseconds}ms 选择={result.Item1}/{result.Item2}/{result.Item3}");
+#endif
 
             return result;
         }
@@ -598,7 +602,7 @@ namespace BlacksmithCore.AI.Strategies
                     if (name != "magicattack" && name != "spaceattack" && i > 0)
                         break;
 
-                    SkillDeclareResult r = (actor == instance.Player)
+                    SkillDeclareResult r = actor.IsPlayer
                         ? instance.TryDeclare(name, i)
                         : instance.ETryDeclare(name, i);
 

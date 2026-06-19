@@ -8,7 +8,6 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Infra.Utils;
-using BlacksmithCore.Specific.Defense;
 
 namespace ModExamples.CrossBowMod
 {

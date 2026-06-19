@@ -13,6 +13,8 @@ namespace BlacksmithCore.Driver
         public Community Self { get; }
         public int Param { get; }
         public string StringParam { get; }
+        public (string SkillName, int Param, string StringParam) History
+            => (SkillName, Param, StringParam);
         public DefaultSkillContext(ISudoOperations sudoOperations, string skillName, Community self, int param, string stringParam)
         {
             SudoOperations = sudoOperations;
@@ -23,19 +25,17 @@ namespace BlacksmithCore.Driver
         }
     }
 
-    /// <summary>
-    /// 线程安全的 GameInstance 对象池，用于减少 AI 策略（特别是 Adversarial 模式）
-    /// 中大量 DeepCopy 导致的内存分配和 GC 压力。
-    /// </summary>
     public static class GameInstancePool
     {
         private static readonly ConcurrentBag<GameInstance> _pool = new();
 
+#if DEBUG
         /// <summary>每 N 次 Rent 打印一次池中实例数量，用于排查泄露。</summary>
         private const int DiagnosticInterval = 100_000;
 
         /// <summary>线程安全的 Rent 累计计数。</summary>
         private static int _rentCount;
+#endif
 
         /// <summary>当前池中缓存的实例数量（近似快照）。</summary>
         public static int Count => _pool.Count;
@@ -53,7 +53,7 @@ namespace BlacksmithCore.Driver
         }
 
         /// <summary>
-        /// 将 GameInstance 归还到池中。归还前会调用 Reset() 将其复位到 fresh 状态。
+        /// 将 GameInstance 归还到池中。
         /// 线程安全：ConcurrentBag 保证多线程并发归还的安全性。
         /// </summary>
         public static void Return(GameInstance instance)
@@ -74,17 +74,18 @@ namespace BlacksmithCore.Driver
         }
 
         /// <summary>
-        /// 供 DeepCopy 调用：Rent 后自动推进诊断计数器。
-        /// 每 <see cref="DiagnosticInterval"/> 次输出当前池大小。
+        /// 供 DeepCopy 调用：Rent 后自动推进诊断计数器（仅在 DEBUG 配置下生效）。
         /// </summary>
         internal static GameInstance RentWithDiagnostic()
         {
             var instance = Rent();
+#if DEBUG
             var count = Interlocked.Increment(ref _rentCount);
             if (count % DiagnosticInterval == 0)
             {
-                // Console.WriteLine($"[GameInstancePool] Rent 累计={count}, 池中实例={_pool.Count}");
+                Console.WriteLine($"[GameInstancePool] Rent 累计={count}, 池中实例={_pool.Count}");
             }
+#endif
             return instance;
         }
     }
@@ -108,7 +109,8 @@ namespace BlacksmithCore.Driver
         {
             return community == Player;
         }
-        public IReadOnlyList<(ISkillContext, ISkillContext)> SkillHistory => History.SkillHistory;
+        public IReadOnlyList<((string SkillName, int Param, string StringParam), (string SkillName, int Param, string StringParam))> SkillHistory
+            => History.SkillHistory;
         public GameInstance DeepCopy()
         {
             GameInstance res = GameInstancePool.RentWithDiagnostic();
@@ -125,7 +127,7 @@ namespace BlacksmithCore.Driver
             GameInstancePool.Return(this);
         }
 
-        public IGameMetadata GameMetadata => Metadata;
+        public ICompileTimeMetadata CompileTimeMetadata => Metadata;
         public SkillDeclareResult TryDeclare(string skillName, int param, string stringParam = "")
         {
             DefaultSkillContext context = new(this, skillName, Player, param, stringParam);
@@ -160,7 +162,7 @@ namespace BlacksmithCore.Driver
             esfs.Add(es.Declare(esn, enemyContext));
 
             Judger.Judge(psfs, esfs);
-            History.SkillHistory.Add((playerContext, enemyContext));
+            History.SkillHistory.Add((playerContext.History, enemyContext.History));
         }
     }
 }

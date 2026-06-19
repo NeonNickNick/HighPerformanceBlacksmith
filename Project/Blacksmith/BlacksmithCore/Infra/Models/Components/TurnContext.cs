@@ -91,58 +91,28 @@ namespace BlacksmithCore.Infra.Models.Components
             attack.Clear();
             foreach (var a in origin.Get<AttackAnalyzableData>())
             {
-                attack.Add(new()
-                {
-                    AnalyzerKey = a.AnalyzerKey,
-                    Clock = a.Clock.Copy(),
-                    Type = a.Type,
-                    Power = a.Power,
-                    APFactor = a.APFactor,
-                    TotalDamage = a.TotalDamage,
-                    StageKeys = a.StageKeys.ToDictionary(),
-                    ExtraParams = a.ExtraParams.ToDictionary()
-                });
+                attack.Add(a.Copy());
             }
 
             var defense = Get<DefenseAnalyzableData>();
             defense.Clear();
             foreach (var a in origin.Get<DefenseAnalyzableData>())
             {
-                defense.Add(new()
-                {
-                    AnalyzerKey = a.AnalyzerKey,
-                    Clock = a.Clock.Copy(),
-                    Defense = a.Defense,  //权宜之计
-                    Power = a.Power,
-                });
+                defense.Add(a.Copy());
             }
 
             var resource = Get<ResourceAnalyzableData>();
             resource.Clear();
             foreach (var a in origin.Get<ResourceAnalyzableData>())
             {
-                resource.Add(new()
-                {
-                    AnalyzerKey = a.AnalyzerKey,
-                    Clock = a.Clock.Copy(),
-                    Type = a.Type,
-                    Power = a.Power,
-                });
+                resource.Add(a.Copy());
             }
 
             var effect = Get<EffectAnalyzableData>();
             effect.Clear();
             foreach (var a in origin.Get<EffectAnalyzableData>())
             {
-                effect.Add(new()
-                {
-                    AnalyzerKey = a.AnalyzerKey,
-                    Clock = a.Clock.Copy(),
-                    EntityClock = a.Clock.Copy(),
-                    Type = a.Type,
-                    Power = a.Power,
-                    TargetType = a.TargetType
-                });
+                effect.Add(a.Copy());
             }
         }
         public void AddPreprocess<TAnalyzableData>(

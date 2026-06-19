@@ -128,7 +128,6 @@ namespace BlacksmithCore.Infra.DSL
                 return new(this);
             }
             public DefenseFile WriteDefense(
-                int power,
                 DefenseEntity defense,
                 int delayRounds = 0,
                 string analyzerKey = nameof(StandardAnalyzers.DefaultDefense)
@@ -141,7 +140,6 @@ namespace BlacksmithCore.Infra.DSL
                         AnalyzerKey = analyzerKey,
                         Clock = new(delayRounds: delayRounds),
                         Defense = defense,
-                        Power = power
                     };
                     source.Focus.Get<TurnContext>().WriteAnalyzableData(analyzableData);
                 }, SentenceType.Defense, StructureType.Main));

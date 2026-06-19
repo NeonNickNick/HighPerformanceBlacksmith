@@ -5,7 +5,6 @@ using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Specific.BuiltInProfessions.CannonDSLExtension;
-using BlacksmithCore.Specific.Defense;
 
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
@@ -110,7 +109,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         private static IDSLSourceFile CannonBarrel(ISkillContext sc)
         {
             Pen pen = sf => sf
-                .WriteDefense(2, new CommonReduction())
+                .WriteDefense(new()
+                {
+                    Name = nameof(CannonBarrel),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.CommonReduction(),
+                    Power = 2,
+                    Clock = new()
+                })
                 .WriteAttack(1, AttackType.Instance.Physical())
                     .CompileTimeIncrease(sc.Self, nameof(TripleStrike));
 

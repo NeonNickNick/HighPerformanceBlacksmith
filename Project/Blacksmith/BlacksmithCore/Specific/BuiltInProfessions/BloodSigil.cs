@@ -5,7 +5,6 @@ using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Specific.BuiltInProfessions.BloodSigilDSLExtension;
-using BlacksmithCore.Specific.Defense;
 namespace BlacksmithCore.Specific.BuiltInProfessions
 {
     using DSL = DSLforSkillLogic;
@@ -93,7 +92,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             int power = (int)MathF.Ceiling(0.4f * sc.Self.Focus.Get<Health>().HP);
             Pen pen = sf => sf
                 .LoseHP(1)
-                .WriteDefense(power, new CommonReduction());
+                .WriteDefense(new()
+                {
+                    Name = nameof(BloodShield),
+                    AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
+                    Type = DefenseType.Instance.CommonReduction(),
+                    Power = power,
+                    Clock = new()
+                });
             return DSL.Create(sc.Self, pen);
         }
         private static bool BloodRageCheck(ISkillContext sc)

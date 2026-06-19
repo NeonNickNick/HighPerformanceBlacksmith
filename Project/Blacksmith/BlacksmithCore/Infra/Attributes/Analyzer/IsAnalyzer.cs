@@ -1,4 +1,4 @@
-namespace BlacksmithCore.Infra.Attributes.Profession
+namespace BlacksmithCore.Infra.Attributes.Analyzer
 {
     public enum AnalyzerType
     {

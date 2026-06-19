@@ -1,7 +1,6 @@
 using BlacksmithCore.Infra.DSL;
 using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Infra.Utils;
-using BlacksmithCore.Specific.Defense;
 
 namespace ModExamples.MonkMod
 {

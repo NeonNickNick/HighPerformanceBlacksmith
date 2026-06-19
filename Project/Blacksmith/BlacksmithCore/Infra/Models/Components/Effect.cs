@@ -12,13 +12,7 @@ namespace BlacksmithCore.Infra.Models.Components
             _effects.Clear();
             foreach (var effect in origin._effects)
             {
-                _effects.Add(new()
-                {
-                    AnalyzerKey = effect.AnalyzerKey,
-                    IsMark = effect.IsMark,
-                    Type = effect.Type,
-                    Clock = effect.Clock.Copy(),
-                });
+                _effects.Add(effect.Copy());
             }
         }
         public void Add(EffectEntity effectEntity)

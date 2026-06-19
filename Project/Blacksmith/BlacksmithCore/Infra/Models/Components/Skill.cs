@@ -22,6 +22,13 @@ namespace BlacksmithCore.Infra.Models.Components
             Name = skillpackage.GetType().Name;
             SkillPackage = skillpackage;
         }
+        public PackageContainer Copy()
+        {
+            return new((MainProfession)SkillPackage.Copy())
+            {
+                Flag = Flag.Copy()
+            };
+        }
     }
     public class Skill :
         IComponent<Body>
@@ -94,9 +101,7 @@ namespace BlacksmithCore.Infra.Models.Components
             _packages.Clear();
             foreach (var pc in origin._packages)
             {
-                var p = (MainProfession)(pc.SkillPackage).Copy();
-                var n = new PackageContainer(p);
-                _packages.Add(n);//权宜之计
+                _packages.Add(pc.Copy());
             }
         }
         public HashSet<string> DisableAll()
