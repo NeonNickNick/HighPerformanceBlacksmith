@@ -15,30 +15,30 @@ namespace ModExamples
     [IsExperimental]
     public partial class HolyBook : MainProfession
     {
-        private bool CrossCheck(ISkillContext sc)
+        private bool CrossCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 0.5f);
         }
-        private IDSLSourceFile Cross(ISkillContext sc)
+        private IDSLSourceFile Cross(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
                 .WriteResource(1, ResourceType.Instance.Cross());
             return DSL.CreateBy(pen);
         }
-        private bool PrayCheck(ISkillContext sc) => true;
-        private IDSLSourceFile Pray(ISkillContext sc)
+        private bool PrayCheck(ISkillCheckContext sc) => true;
+        private IDSLSourceFile Pray(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(3, new CommonReduction());
             return DSL.CreateBy(pen);
         }
-        private bool ArkCheck(ISkillContext sc)
+        private bool ArkCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Ark(ISkillContext sc)
+        private IDSLSourceFile Ark(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Cross())
@@ -47,12 +47,12 @@ namespace ModExamples
             return DSL.CreateBy(pen);
         }
         private int _blasphemyCount = 0;
-        private bool BlasphemyCheck(ISkillContext sc)
+        private bool BlasphemyCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile Blasphemy(ISkillContext sc)
+        private IDSLSourceFile Blasphemy(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())
@@ -61,11 +61,11 @@ namespace ModExamples
                 .WriteFree(a => _blasphemyCount++, true);
             return DSL.CreateBy(pen);
         }
-        private bool RebirthCheck(ISkillContext sc)
+        private bool RebirthCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
-        private IDSLSourceFile Rebirth(ISkillContext sc)
+        private IDSLSourceFile Rebirth(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())
@@ -82,11 +82,11 @@ namespace ModExamples
                 .WriteDefense(1, new PercentageReduction(baseline: 4), delayRounds: 2);
             return DSL.CreateBy(pen);
         }
-        private bool ExonerationCheck(ISkillContext sc)
+        private bool ExonerationCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
-        private IDSLSourceFile Exoneration(ISkillContext sc)
+        private IDSLSourceFile Exoneration(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())

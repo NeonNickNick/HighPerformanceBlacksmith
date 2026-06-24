@@ -13,12 +13,12 @@ namespace ModExamples.HolyBookMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool HolyBookCheck(ISkillContext sc)
+        private bool HolyBookCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile HolyBook(ISkillContext sc)
+        private IDSLSourceFile HolyBook(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new HolyBook()));
             Pen pen = sf => sf

@@ -3,6 +3,7 @@ using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
+using BlacksmithCore.Infra.Profession;
 
 
 namespace BlacksmithCore.AI.Strategies
@@ -74,7 +75,7 @@ namespace BlacksmithCore.AI.Strategies
             _main = gameInstance;
         }
 
-        public (string skillName, int param, string stringParam) ChooseSkill()
+        public SkillDeclareData ChooseSkill()
         {
             int threadCount = Math.Min(7, Environment.ProcessorCount);
             var tasks = new List<Task<List<MCTSNode>>>();
@@ -91,12 +92,12 @@ namespace BlacksmithCore.AI.Strategies
             Task.WaitAll(tasks.ToArray());
 
             // 合并 root children
-            var merged = new Dictionary<(string, int, string), (double wins, int visits)>();
+            var merged = new Dictionary<SkillDeclareData, (double wins, int visits)>();
             foreach (var task in tasks)
             {
                 foreach (var child in task.Result)
                 {
-                    var action = child.Action!.Value;
+                    var action = child.Action!;
                     if (!merged.ContainsKey(action))
                         merged[action] = (0, 0);
 
@@ -107,7 +108,7 @@ namespace BlacksmithCore.AI.Strategies
                 }
             }
 
-            var finalChildren = merged.Select(kv => new MCTSNode(null!, null!, new List<(string, int, string)>())
+            var finalChildren = merged.Select(kv => new MCTSNode(null!, null!, new List<SkillDeclareData>())
             {
                 Action = kv.Key,
                 Wins = kv.Value.wins,
@@ -142,11 +143,7 @@ namespace BlacksmithCore.AI.Strategies
                     // 一次 DeepCopy 同时用于 expansion 与 rollout
                     var simState = node.State!.DeepCopy();
                     var playerAction = RandomAction(simState.Player, simState);
-                    simState.Declare(
-                        playerAction.Item1, playerAction.Item2,
-                        action.Item1, action.Item2,
-                        playerAction.Item3, action.Item3
-                    );
+                    simState.Declare(playerAction, action);
 
                     // 在 rollout 覆盖之前捕获子节点的合法动作
                     var nextActions = GetAllAvailable(simState.Enemy, simState);
@@ -170,7 +167,7 @@ namespace BlacksmithCore.AI.Strategies
 
                         var p = RandomAction(simState.Player, simState);
                         var e = RandomAction(simState.Enemy, simState);
-                        simState.Declare(p.Item1, p.Item2, e.Item1, e.Item2, p.Item3, e.Item3);
+                        simState.Declare(p, e);
 
                         result = (result * d + MathF.Exp(-0.3f * d) * Evaluate(simState));
                         result /= d;
@@ -224,12 +221,12 @@ namespace BlacksmithCore.AI.Strategies
             var parent = node.Parent!;
             EnsureState(parent);
             node.State = parent.State!.DeepCopy();
-            var pa = node.PlayerAction!.Value;
-            var ea = node.Action!.Value;
-            node.State.Declare(pa.Item1, pa.Item2, ea.Item1, ea.Item2, pa.Item3, ea.Item3);
+            var pa = node.PlayerAction!;
+            var ea = node.Action!;
+            node.State.Declare(pa, ea);
         }
 
-        private (string, int, string) SampleFromTopK(List<MCTSNode> children, int round)
+        private SkillDeclareData SampleFromTopK(List<MCTSNode> children, int round)
         {
             int k = Math.Min(2, children.Count);
             double temperature = Math.Max(0.003, _params.TemperatureCoefficient * round);
@@ -268,9 +265,9 @@ namespace BlacksmithCore.AI.Strategies
             {
                 acc += weights[i];
                 if (r <= acc)
-                    return topK[i].Action!.Value;
+                    return topK[i].Action!;
             }
-            return topK.Last().Action!.Value;
+            return topK.Last().Action!;
         }
 
         private class MCTSNode
@@ -278,17 +275,17 @@ namespace BlacksmithCore.AI.Strategies
             public GameInstance? State;
             public MCTSNode? Parent;
             public List<MCTSNode> Children = new();
-            public (string skill, int param, string stringParam)? Action;
-            public (string skill, int param, string stringParam)? PlayerAction;
+            public SkillDeclareData? Action;
+            public SkillDeclareData? PlayerAction;
             public int Visits = 0;
             public double Wins = 0;
-            public List<(string, int, string)> UntriedActions;
+            public List<SkillDeclareData> UntriedActions;
 
-            public MCTSNode(GameInstance? state, MCTSNode? parent, List<(string, int, string)> actions)
+            public MCTSNode(GameInstance? state, MCTSNode? parent, List<SkillDeclareData> actions)
             {
                 State = state;
                 Parent = parent;
-                UntriedActions = new List<(string, int, string)>(actions.Count > 0 ? actions.Count : 16);
+                UntriedActions = new List<SkillDeclareData>(actions.Count > 0 ? actions.Count : 16);
                 if (actions.Count > 0)
                     UntriedActions.AddRange(actions);
             }
@@ -405,17 +402,17 @@ namespace BlacksmithCore.AI.Strategies
                     state.Player.Focus.Get<Health>().HP <= 0;
         }
 
-        private (string, int, string) RandomAction(Community actor, GameInstance instance)
+        private SkillDeclareData RandomAction(Community actor, GameInstance instance)
         {
             var actions = GetAllAvailable(actor, instance);
             if (actions.Count == 0)
-                return ("", 0, "");
+                return SkillDeclareData.Parse("iron")!;
             return actions[_random.Value!.Next(actions.Count)];
         }
 
-        private List<(string, int, string)> GetAllAvailable(Community actor, GameInstance instance)
+        private List<SkillDeclareData> GetAllAvailable(Community actor, GameInstance instance)
         {
-            List<(string, int, string)> res = new(32);
+            List<SkillDeclareData> res = new(32);
             var names = actor.Focus.Get<Skill>().GetAvailableSkillNames();
 
             foreach (var name in names)
@@ -428,12 +425,13 @@ namespace BlacksmithCore.AI.Strategies
                     if (name != "magicattack" && name != "spaceattack" && i > 0)
                         break;
 
+                    var skillData = SkillDeclareData.Parse(i > 0 ? $"{name}(p:{i})" : name)!;
                     SkillDeclareResult r = (actor == instance.Player)
-                        ? instance.TryDeclare(name, i)
-                        : instance.ETryDeclare(name, i);
+                        ? instance.TryDeclare(skillData)
+                        : instance.ETryDeclare(skillData);
 
                     if (r == SkillDeclareResult.Success)
-                        res.Add((name, i, ""));
+                        res.Add(skillData);
                     else if (i > 0)
                         break;
                 }

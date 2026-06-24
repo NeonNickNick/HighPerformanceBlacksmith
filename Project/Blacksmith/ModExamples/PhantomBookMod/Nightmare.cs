@@ -12,12 +12,12 @@ namespace ModExamples.PhantomBookMod
     [IsExperimental]
     public partial class Nightmare : MainProfession
     {
-        private bool DreamDiveCheck(ISkillContext sc)
+        private bool DreamDiveCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile DreamDive(ISkillContext sc)
+        private IDSLSourceFile DreamDive(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())
@@ -28,13 +28,13 @@ namespace ModExamples.PhantomBookMod
                 .WriteDefense(0f, new MagicalImmunity());
             return DSL.CreateBy(pen);
         }
-        private bool MaterializeCheck(ISkillContext sc)
+        private bool MaterializeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Materialize(ISkillContext sc)
+        private IDSLSourceFile Materialize(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())
@@ -44,12 +44,12 @@ namespace ModExamples.PhantomBookMod
                 .WriteDefense(4f, new CommonReduction());
             return DSL.CreateBy(pen);
         }
-        private bool ClingingHauntCheck(ISkillContext sc)
+        private bool ClingingHauntCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile ClingingHaunt(ISkillContext sc)
+        private IDSLSourceFile ClingingHaunt(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Spirit())
@@ -58,11 +58,11 @@ namespace ModExamples.PhantomBookMod
                 .WriteAttack(1f, AttackType.Instance.Magical(), delayRounds: 2);
             return DSL.CreateBy(pen);
         }
-        private bool ChannelingCheck(ISkillContext sc)
+        private bool ChannelingCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 1f);
         }
-        private IDSLSourceFile Channeling(ISkillContext sc)
+        private IDSLSourceFile Channeling(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Spirit())

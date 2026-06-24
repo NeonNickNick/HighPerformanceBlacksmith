@@ -49,7 +49,7 @@ namespace ClapSourceGenerators.SkillRegistration
                 return null;
 
             var compilation = ctx.SemanticModel.Compilation;
-            var skillContextType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.Profession.ISkillContext");
+            var skillContextType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.Profession.ISkillCheckContext");
             var dslSourceFileType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.DSL.IDSLSourceFile");
             if (skillContextType == null || dslSourceFileType == null)
                 return null;

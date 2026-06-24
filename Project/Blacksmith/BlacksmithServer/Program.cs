@@ -5,6 +5,7 @@ using BlacksmithCore.Infra.Utils;
 using BlacksmithServer.Web;
 using BlacksmithServer.Web.Auth;
 using BlacksmithServer.Web.Realtime;
+using Microsoft.AspNetCore.StaticFiles;
 namespace BlacksmithServer
 {
     public static class Server
@@ -29,7 +30,15 @@ namespace BlacksmithServer
             var app = builder.Build();
 
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+                    ctx.Context.Response.Headers["Pragma"] = "no-cache";
+                    ctx.Context.Response.Headers["Expires"] = "0";
+                }
+            });
             app.UseWebSockets();
 
             app.MapGet("/api/health", () => Results.Json(new { ok = true, message = "BlacksmithServer online." }));
@@ -192,11 +201,14 @@ namespace BlacksmithServer
                         await coordinator.CancelQueueAsync(username, "Matchmaking cancelled.");
                         break;
                     case "submitTurn":
-                        var skillName = ReadString(root, "skillName") ?? "iron";
-                        var param = ReadInt(root, "param");
-                        var stringParam = ReadString(root, "stringParam") ?? "";
-                        Console.WriteLine($"[Turn] {username}: skill='{skillName}' param={param} stringParam='{stringParam}' raw='{root.GetRawText()}'");
-                        await coordinator.SubmitTurnAsync(username, skillName, param, stringParam);
+                        var skillInput = ReadString(root, "skillInput");
+                        if (string.IsNullOrWhiteSpace(skillInput))
+                        {
+                            await coordinator.SendCurrentStateAsync(username, "Missing or empty 'skillInput' field.");
+                            break;
+                        }
+                        Console.WriteLine($"[Turn] {username}: skillInput='{skillInput}' raw='{root.GetRawText()}'");
+                        await coordinator.SubmitTurnAsync(username, skillInput);
                         break;
                     case "requestSnapshot":
                         await coordinator.SendCurrentStateAsync(username);

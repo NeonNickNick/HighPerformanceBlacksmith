@@ -13,13 +13,13 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Warlock : MainProfession
     {
-        private static bool MagicCheck(ISkillContext sc)
+        private static bool MagicCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1);
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Magic(ISkillContext sc)
+        private static IDSLSourceFile Magic(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -27,28 +27,28 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             return DSL.CreateBy(pen);
         }
 
-        private static bool MagicAttackCheck(ISkillContext sc)
+        private static bool MagicAttackCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Magic(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Magic(), sc.SkillDeclareData.Param);
         }
         [HasAttack(2)]
         [HasAttack(2)]
         [HasAttack(2)]
         [IsInfinite]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile MagicAttack(ISkillContext sc)
+        private static IDSLSourceFile MagicAttack(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Magic())
-                .WriteAttack(2 * sc.Param, AttackType.Instance.Physical(), delayRounds: 0)
-                .WriteAttack(2 * sc.Param, AttackType.Instance.Physical(), delayRounds: 1)
-                .WriteAttack(2 * sc.Param, AttackType.Instance.Physical(), delayRounds: 2);
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Magic())
+                .WriteAttack(2 * sc.SkillDeclareData.Param, AttackType.Instance.Physical(), delayRounds: 0)
+                .WriteAttack(2 * sc.SkillDeclareData.Param, AttackType.Instance.Physical(), delayRounds: 1)
+                .WriteAttack(2 * sc.SkillDeclareData.Param, AttackType.Instance.Physical(), delayRounds: 2);
             return DSL.CreateBy(pen);
         }
 
-        private bool MuteCheck(ISkillContext sc) => true;
+        private bool MuteCheck(ISkillCheckContext sc) => true;
         [Labels(Impression.Aggressive, Strength.Super)]
-        private static IDSLSourceFile Mute(ISkillContext sc)
+        private static IDSLSourceFile Mute(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                .WriteEffect(
@@ -63,14 +63,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             enemy.Focus.Get<TurnContext>().Get<ResourceAnalyzableData>().RemoveAll(r => r.Type == ResourceType.Instance.Space() || r.Type == ResourceType.Instance.Time());
         }
-        private static bool SacrificeCheck(ISkillContext sc)
+        private static bool SacrificeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 1;
         }
         [HasDefense]
         [HasResource]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile Sacrifice(ISkillContext sc)
+        private static IDSLSourceFile Sacrifice(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .LoseHP(1)
@@ -87,13 +87,13 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             return DSL.CreateBy(pen);
         }
 
-        private static bool AlchemyCheck(ISkillContext sc)
+        private static bool AlchemyCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2.5f);
         }
         [IsEquipmentSkill]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Alchemy(ISkillContext sc)
+        private static IDSLSourceFile Alchemy(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2.5f, ResourceType.Instance.Iron())

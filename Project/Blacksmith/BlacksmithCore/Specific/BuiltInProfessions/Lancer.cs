@@ -70,7 +70,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         {
             player.Focus.AddMark(analyzableData.AnalyzerKey);
         }
-        private static bool SkyStrikeCheck(ISkillContext sc)
+        private static bool SkyStrikeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1);
         }
@@ -78,7 +78,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Aggressive, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile SkyStrike(ISkillContext sc)
+        private static IDSLSourceFile SkyStrike(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -87,7 +87,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     .WithInterupt();
             return DSL.CreateBy(pen);
         }
-        private static bool DragonToothCheck(ISkillContext sc)
+        private static bool DragonToothCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1);
         }
@@ -96,7 +96,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile DragonTooth(ISkillContext sc)
+        private static IDSLSourceFile DragonTooth(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -112,7 +112,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 });
             return DSL.CreateBy(pen);
         }
-        private static bool TyrantDestructionCheck(ISkillContext sc)
+        private static bool TyrantDestructionCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1);
         }
@@ -120,7 +120,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile TyrantDestruction(ISkillContext sc)
+        private static IDSLSourceFile TyrantDestruction(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -128,7 +128,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     .WithCallback(AttackStage.Instance.OnHitArmorFirstTime(), nameof(GetPattern));
             return DSL.CreateBy(pen);
         }
-        private static bool TripleStabCheck(ISkillContext sc)
+        private static bool TripleStabCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1);
         }
@@ -138,7 +138,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile TripleStab(ISkillContext sc)
+        private static IDSLSourceFile TripleStab(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -150,13 +150,13 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     .WithCallback(AttackStage.Instance.OnHitArmorFirstTime(), nameof(GetPattern));
             return DSL.CreateBy(pen);
         }
-        private static bool RisingDragonCheck(ISkillContext sc)
+        private static bool RisingDragonCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.Self.Focus.CountMark(nameof(Charge)) > 0 ? 0 : 4);
         }
         [HasAttack(10)]
         [Labels(Impression.Aggressive, Strength.Strong)]
-        private static IDSLSourceFile RisingDragon(ISkillContext sc)
+        private static IDSLSourceFile RisingDragon(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .TakeMark(nameof(Charge), out var layerNum)
@@ -165,7 +165,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     .WithModify(last => last.Power += 4 * layerNum.Value);
             return DSL.CreateBy(pen);
         }
-        private static bool ChargeCheck(ISkillContext sc)
+        private static bool ChargeCheck(ISkillCheckContext sc)
         {
             var count = sc.Self.Focus.CountMark(nameof(Charge));
             return count < 2 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), count > 0 ? 0 : 4);
@@ -203,7 +203,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         */
         [HasBuff]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile Charge(ISkillContext sc)
+        private static IDSLSourceFile Charge(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .CountMark(nameof(Charge), out var layerNum)

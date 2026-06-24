@@ -33,8 +33,8 @@ namespace AIPVPPlatform
                 {
                     var t1 = _s1.ChooseSkill();
                     var t2 = _s2.ChooseSkill();
-                    ins1.Declare(t2.skillName, t2.param, t1.skillName, t1.param, t2.stringParam, t1.stringParam);
-                    ins2.Declare(t1.skillName, t1.param, t2.skillName, t2.param, t1.stringParam, t2.stringParam);
+                    ins1.Declare(t2, t1);
+                    ins2.Declare(t1, t2);
                     if (ins1.Player.Focus.Get<Health>().IsKilled)
                     {
                         s1winTimes++;

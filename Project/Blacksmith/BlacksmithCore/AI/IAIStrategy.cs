@@ -1,4 +1,5 @@
 using BlacksmithCore.Driver;
+using BlacksmithCore.Infra.Profession;
 
 namespace BlacksmithCore.AI
 {
@@ -6,6 +7,6 @@ namespace BlacksmithCore.AI
     {
         string Name { get; }
         public void Init(GameInstance gameInstance);
-        public (string skillName, int param, string stringParam) ChooseSkill();
+        public SkillDeclareData ChooseSkill();
     }
 }

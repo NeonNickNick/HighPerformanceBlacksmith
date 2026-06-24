@@ -10,22 +10,22 @@ namespace ModExamples.WineGlassMod
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class WineGlass : MainProfession
     {
-        private bool WineCheck(ISkillContext sc)
+        private bool WineCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 0.5f);
         }
-        private IDSLSourceFile Wine(ISkillContext sc)
+        private IDSLSourceFile Wine(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Wine());
             return DSL.CreateBy(pen);
         }
-        private bool CarnivalCheck(ISkillContext sc)
+        private bool CarnivalCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wine(), 3f);
         }
-        private IDSLSourceFile Carnival(ISkillContext sc)
+        private IDSLSourceFile Carnival(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3f, ResourceType.Instance.Wine())
@@ -43,11 +43,11 @@ namespace ModExamples.WineGlassMod
                 );
             return DSL.CreateBy(pen);
         }
-        private bool ForgetCheck(ISkillContext sc)
+        private bool ForgetCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wine(), 3f);
         }
-        private IDSLSourceFile Forget(ISkillContext sc)
+        private IDSLSourceFile Forget(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3f, ResourceType.Instance.Wine())

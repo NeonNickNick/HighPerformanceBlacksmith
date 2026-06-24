@@ -40,12 +40,10 @@ logoutBtn?.addEventListener('click', () => {
 
 function submitTurn() {
     withBusy(async () => {
-        const skill = parseSkill(skillInput?.value || '');
+        const input = (skillInput?.value || '').trim() || 'iron';
         sendSocketMessage({
             type: 'submitTurn',
-            skillName: skill.name,
-            param: skill.param,
-            stringParam: skill.stringParam
+            skillInput: input
         });
     });
 }

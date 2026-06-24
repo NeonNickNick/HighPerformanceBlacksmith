@@ -13,12 +13,12 @@ namespace ModExamples.PhantomBookMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool PhantomBookCheck(ISkillContext sc)
+        private bool PhantomBookCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2.5f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile PhantomBook(ISkillContext sc)
+        private IDSLSourceFile PhantomBook(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new PhantomBook()));
             Pen pen = sf => sf

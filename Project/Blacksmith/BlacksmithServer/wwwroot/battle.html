@@ -40,7 +40,7 @@
                     </summary>
                     <div class="hero-content">
                         <div class="hero-copy-block">
-                            <p class="hero-copy" id="heroCopy">Queue for a live duel, then keep using the familiar `skillName param` input flow from BlacksmithClient.</p>
+                            <p class="hero-copy" id="heroCopy">Queue for a live duel, then enter your skill using the DSL format (e.g. `iron` or `magicattack(p:3)`).</p>
                         </div>
 
                         <div class="hero-controls">
@@ -83,14 +83,14 @@
 
                     <label class="field">
                         <span>Your skill</span>
-                        <input id="skill" placeholder="iron 0" autocomplete="off" />
+                        <input id="skill" placeholder="iron" autocomplete="off" />
                     </label>
 
                     <div class="button-row">
                         <button id="declareBtn" class="primary-btn">Lock Turn</button>
                     </div>
 
-                    <p class="hint" id="modeHint">Use the same text input pattern as the local client: `skillName param`.</p>
+                    <p class="hint" id="modeHint">Enter your skill using the DSL format (e.g. `iron` or `magicattack(p:3)`).</p>
                     <p class="hint" id="actionHint">Click Find Match to enter the matchmaking queue.</p>
 
                     <div class="action-timers">

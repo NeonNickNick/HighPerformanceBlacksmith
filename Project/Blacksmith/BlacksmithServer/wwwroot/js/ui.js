@@ -2,31 +2,6 @@ function safeText(value, fallback = '--') {
     return value === null || value === undefined || value === '' ? fallback : String(value);
 }
 
-function parseSkill(text) {
-    const raw = (text || '').trim();
-    if (!raw) return { name: 'iron', param: 0, stringParam: '' };
-
-    const tokens = raw.split(/\s+/);
-    const name = tokens[0] || 'iron';
-    let param = 0;
-    let stringParam = '';
-
-    for (let i = 1; i < tokens.length; i++) {
-        if (tokens[i] === '-p' && i + 1 < tokens.length) {
-            const parsed = Number.parseInt(tokens[i + 1], 10);
-            if (Number.isFinite(parsed) && parsed >= 0) {
-                param = parsed;
-                i++;
-            }
-        } else if (tokens[i] === '-s' && i + 1 < tokens.length) {
-            stringParam = tokens[i + 1];
-            i++;
-        }
-    }
-
-    return { name, param, stringParam };
-}
-
 function resultLabel(result) {
     switch (result) {
         case 'win': return 'Win';
@@ -216,13 +191,11 @@ function buildTurnSummary(turn) {
         <div class="summary-card player-card">
             <h3>Your Action</h3>
             <div class="skill-highlight">${safeText(turn.playerSkill)}</div>
-            <div class="summary-line">Param: ${safeText(turn.playerParam, 0)}</div>
             <div class="summary-line">Timed out: ${turn.playerTimedOut ? 'Yes' : 'No'}</div>
         </div>
         <div class="summary-card opponent-card">
             <h3>Opponent Action</h3>
             <div class="skill-highlight">${safeText(turn.enemySkill)}</div>
-            <div class="summary-line">Param: ${safeText(turn.enemyParam, 0)}</div>
             <div class="summary-line">Timed out: ${turn.enemyTimedOut ? 'Yes' : 'No'}</div>
             ${noteHtml}
         </div>
@@ -249,7 +222,7 @@ function renderHistory() {
                     <span>Turn ${turn.index}</span>
                     <span>${timeoutBadge}</span>
                 </div>
-                <div>You: <strong class="skill-name">${safeText(turn.playerSkill)}</strong> ${safeText(turn.playerParam, 0)} | Opponent: <strong class="skill-name">${safeText(turn.enemySkill)}</strong> ${safeText(turn.enemyParam, 0)}</div>
+                <div>You: <strong class="skill-name">${safeText(turn.playerSkill)}</strong> | Opponent: <strong class="skill-name">${safeText(turn.enemySkill)}</strong></div>
             </button>
         `;
     }).join('');
@@ -278,7 +251,7 @@ function renderTurn() {
     if (turnCounterPill) turnCounterPill.textContent = turn ? `Turn ${turn.index}` : `Turn ${State.turns.length}`;
     if (actionText) {
         if (turn) {
-            actionText.innerHTML = `You used <strong class="skill-name">${safeText(turn.playerSkill)}</strong> ${safeText(turn.playerParam, 0)}. Opponent used <strong class="skill-name">${safeText(turn.enemySkill)}</strong> ${safeText(turn.enemyParam, 0)}.`;
+            actionText.innerHTML = `You used <strong class="skill-name">${safeText(turn.playerSkill)}</strong>. Opponent used <strong class="skill-name">${safeText(turn.enemySkill)}</strong>.`;
         } else if (State.snapshot?.resultDetail?.summary) {
             actionText.textContent = State.snapshot.resultDetail.summary;
         } else {

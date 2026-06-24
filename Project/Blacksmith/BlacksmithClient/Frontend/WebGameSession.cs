@@ -3,6 +3,7 @@ using BlacksmithCore.AI;
 using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Entites;
+using BlacksmithCore.Infra.Profession;
 
 namespace BlacksmithClient.Frontend
 {
@@ -16,7 +17,7 @@ namespace BlacksmithClient.Frontend
         private bool _started;
         private string _modeName = string.Empty;
         private bool _isManual;
-        private Task<(string skillName, int param, string stringParam)>? _pendingAI;
+        private Task<SkillDeclareData>? _pendingAI;
         private CancellationTokenSource? _cts;
 
         public WebGameSession(List<IAIStrategy> strategies)
@@ -76,29 +77,31 @@ namespace BlacksmithClient.Frontend
             _pendingAI = Task.Run(() => _activeAI.ChooseSkill(), ct);
         }
 
-        public async Task<DeclareResult> DeclareTurnAsync(string skillName, int param, string esn, int ep, string stringParam = "", string esp = "")
+        public async Task<DeclareResult> DeclareTurnAsync(string playerInput, string enemyInput)
         {
             if (_game == null || !_started)
                 return new DeclareResult { Ok = false, Message = "Game not started.", Snapshot = GetSnapshot() };
 
-            var playerResult = _game.TryDeclare(skillName, param, stringParam);
-            if (playerResult != SkillDeclareResult.Success)
-                return new DeclareResult { Ok = false, Message = $"Player skill '{skillName}' {playerResult}.", Snapshot = GetSnapshot() };
+            var playerSkill = SkillDeclareData.Parse(playerInput);
+            if (playerSkill == null)
+                return new DeclareResult { Ok = false, Message = $"Invalid player input format: '{playerInput}'.", Snapshot = GetSnapshot() };
 
-            string enemySkillName;
-            int enemyParam;
-            string enemyStringParam;
+            var playerResult = _game.TryDeclare(playerSkill);
+            if (playerResult != SkillDeclareResult.Success)
+                return new DeclareResult { Ok = false, Message = $"Player skill '{playerInput}' {playerResult}.", Snapshot = GetSnapshot() };
+
+            SkillDeclareData enemySkill;
 
             if (!_isManual && _activeAI != null)
             {
                 var sw = Stopwatch.StartNew();
                 if (_pendingAI == null)
                 {
-                    (enemySkillName, enemyParam, enemyStringParam) = _activeAI.ChooseSkill();
+                    enemySkill = _activeAI.ChooseSkill();
                 }
                 else
                 {
-                    (enemySkillName, enemyParam, enemyStringParam) = await _pendingAI;
+                    enemySkill = await _pendingAI;
                     _pendingAI = null;
                 }
                 sw.Stop();
@@ -107,16 +110,18 @@ namespace BlacksmithClient.Frontend
             else
             {
                 _thinkingTimesMs.Add(0);
-                var enemyResult = _game.ETryDeclare(esn, ep, esp);
-                if (enemyResult != SkillDeclareResult.Success)
-                    return new DeclareResult { Ok = false, Message = $"Enemy skill '{esn}' {enemyResult}.", Snapshot = GetSnapshot() };
+                var parsedEnemy = SkillDeclareData.Parse(enemyInput);
+                if (parsedEnemy == null)
+                    return new DeclareResult { Ok = false, Message = $"Invalid enemy input format: '{enemyInput}'.", Snapshot = GetSnapshot() };
 
-                enemySkillName = esn;
-                enemyParam = ep;
-                enemyStringParam = esp;
+                var enemyResult = _game.ETryDeclare(parsedEnemy);
+                if (enemyResult != SkillDeclareResult.Success)
+                    return new DeclareResult { Ok = false, Message = $"Enemy skill '{enemyInput}' {enemyResult}.", Snapshot = GetSnapshot() };
+
+                enemySkill = parsedEnemy;
             }
 
-            _game.Declare(skillName, param, enemySkillName, enemyParam, stringParam, enemyStringParam);
+            _game.Declare(playerSkill, enemySkill);
 
             StartAIComputation();
 
@@ -156,12 +161,8 @@ namespace BlacksmithClient.Frontend
                 {
                     index = i + 1,
                     result = "Continue",
-                    playerSkill = pair.Item1.SkillName,
-                    playerParam = pair.Item1.Param,
-                    playerStringParam = pair.Item1.StringParam,
-                    enemySkill = pair.Item2.SkillName,
-                    enemyParam = pair.Item2.Param,
-                    enemyStringParam = pair.Item2.StringParam,
+                    playerSkill = pair.Item1.ToDisplayString(),
+                    enemySkill = pair.Item2.ToDisplayString(),
                     thinkingTimeMs = i < _thinkingTimesMs.Count ? _thinkingTimesMs[i] : 0.0
                 }).ToList(),
                 started = _started,

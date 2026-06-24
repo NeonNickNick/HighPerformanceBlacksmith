@@ -13,12 +13,12 @@ namespace ModExamples.WineGlassMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool WineGlassCheck(ISkillContext sc)
+        private bool WineGlassCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1.5f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile WineGlass(ISkillContext sc)
+        private IDSLSourceFile WineGlass(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new WineGlass()));
             Pen pen = sf => sf

@@ -1,4 +1,5 @@
 using BlacksmithCore.AI;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace BlacksmithClient.Frontend
 {
@@ -19,7 +20,15 @@ namespace BlacksmithClient.Frontend
             Console.WriteLine($"ContentRootPath: {app.Environment.ContentRootPath}");
 
             app.UseDefaultFiles();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    ctx.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+                    ctx.Context.Response.Headers["Pragma"] = "no-cache";
+                    ctx.Context.Response.Headers["Expires"] = "0";
+                }
+            });
 
             WebGameSession webGameSession = new(availableStrategies);
 
@@ -38,12 +47,12 @@ namespace BlacksmithClient.Frontend
             app.MapPost("/api/declare", async (HttpContext ctx) =>
             {
                 var dto = await ctx.Request.ReadFromJsonAsync<DeclareDto>();
-                if (dto == null)
+                if (dto == null || string.IsNullOrWhiteSpace(dto.playerInput) || string.IsNullOrWhiteSpace(dto.enemyInput))
                 {
-                    return Results.Json(new { ok = false, message = "Invalid input", snapshot = webGameSession.GetSnapshot() });
+                    return Results.Json(new { ok = false, message = "Invalid input: both playerInput and enemyInput are required.", snapshot = webGameSession.GetSnapshot() });
                 }
 
-                var result = await webGameSession.DeclareTurnAsync(dto.skillName ?? string.Empty, dto.param, dto.esn ?? "iron", dto.ep, dto.stringParam ?? "", dto.esp ?? "");
+                var result = await webGameSession.DeclareTurnAsync(dto.playerInput, dto.enemyInput);
                 return Results.Json(new { ok = result.Ok, message = result.Message, snapshot = result.Snapshot });
             });
 
@@ -70,12 +79,8 @@ namespace BlacksmithClient.Frontend
         }
         private class DeclareDto
         {
-            public string? skillName { get; set; }
-            public int param { get; set; }
-            public string? esn { get; set; }
-            public int ep { get; set; }
-            public string? stringParam { get; set; }
-            public string? esp { get; set; }
+            public string? playerInput { get; set; }
+            public string? enemyInput { get; set; }
         }
     }
 }

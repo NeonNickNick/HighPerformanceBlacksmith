@@ -9,16 +9,16 @@ namespace ModExamples.CauldronMod
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class ElementalArmor : MainProfession
     {
-        private bool HammerCheck(ISkillContext sc) => true;
+        private bool HammerCheck(ISkillCheckContext sc) => true;
         [HasAttack]
-        private IDSLSourceFile Hammer(ISkillContext sc)
+        private IDSLSourceFile Hammer(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteAttack(6f, AttackType.Instance.Physical());
             return DSL.CreateBy(pen);
         }
-        private bool GuardCheck(ISkillContext sc) => true;
-        private IDSLSourceFile Guard(ISkillContext sc)
+        private bool GuardCheck(ISkillCheckContext sc) => true;
+        private IDSLSourceFile Guard(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(8f, new CommonReduction());

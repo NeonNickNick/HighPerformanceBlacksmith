@@ -9,7 +9,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Driver : MainProfession
     {
-        public override IDSLSourceFile PassiveSkillImpl(ISkillContext sc)
+        public override IDSLSourceFile PassiveSkillImpl(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(new()
@@ -30,24 +30,24 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 });
             return DSL.CreateBy(pen);
         }
-        private static bool SpaceAttackCheck(ISkillContext sc)
+        private static bool SpaceAttackCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Space(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Space(), sc.SkillDeclareData.Param);
         }
         [HasAttack(12)]
         [IsInfinite]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile SpaceAttack(ISkillContext sc)
+        private static IDSLSourceFile SpaceAttack(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Space())
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Space())
                 .TakeMark(nameof(Space2Time), out var layerNum)
-                .WriteAttack(12 * sc.Param, AttackType.Instance.Physical())
+                .WriteAttack(12 * sc.SkillDeclareData.Param, AttackType.Instance.Physical())
                     .WithModify(last => last.Power += layerNum.Value);
             return DSL.CreateBy(pen);
         }
 
-        private static bool Space2TimeCheck(ISkillContext sc)
+        private static bool Space2TimeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Space(), 1);
         }
@@ -55,7 +55,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Space2Time(ISkillContext sc)
+        private static IDSLSourceFile Space2Time(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Space())
@@ -72,7 +72,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             return DSL.CreateBy(pen);
         }
 
-        private static bool Time2SpaceCheck(ISkillContext sc)
+        private static bool Time2SpaceCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Time(), 1);
         }
@@ -80,7 +80,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Time2Space(ISkillContext sc)
+        private static IDSLSourceFile Time2Space(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Time())
@@ -97,23 +97,23 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
             return DSL.CreateBy(pen);
         }
 
-        private static bool SpaceBarrierCheck(ISkillContext sc)
+        private static bool SpaceBarrierCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Param <= 5 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.SkillDeclareData.Param <= 5 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.SkillDeclareData.Param);
         }
         [HasDefense]
         [IsInfinite]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile SpaceBarrier(ISkillContext sc)
+        private static IDSLSourceFile SpaceBarrier(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Iron())
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Iron())
                 .WriteDefense(new()
                 {
                     Name = nameof(SpaceBarrier),
                     AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
                     Type = DefenseType.Instance.RealReduction(),
-                    Power = (int)(5.5f * sc.Param - 0.5f * sc.Param * sc.Param),
+                    Power = (int)(5.5f * sc.SkillDeclareData.Param - 0.5f * sc.SkillDeclareData.Param * sc.SkillDeclareData.Param),
                     Clock = new()
                 });
             return DSL.CreateBy(pen);

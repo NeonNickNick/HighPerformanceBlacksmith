@@ -1,6 +1,7 @@
 using BlacksmithCore.Driver;
 using BlacksmithCore.Infra.Models.Components;
 using BlacksmithCore.Infra.Models.Entites;
+using BlacksmithCore.Infra.Profession;
 
 namespace BlacksmithServer.Web.Realtime
 {
@@ -73,9 +74,9 @@ namespace BlacksmithServer.Web.Realtime
             }
         }
 
-        public async Task SubmitTurnAsync(string username, string skillName, int param, string stringParam = "")
+        public async Task SubmitTurnAsync(string username, string skillInput)
         {
-            var normalizedSkill = NormalizeSkillName(skillName);
+            var skillData = SkillDeclareData.Parse(skillInput);
             var participant = ResolveParticipant(username);
             var shouldResolve = false;
             var message = string.Empty;
@@ -99,13 +100,18 @@ namespace BlacksmithServer.Web.Realtime
                     snapshots = BuildSnapshotsNoLock();
                     message = "You already locked in a skill for this round.";
                 }
+                else if (skillData == null)
+                {
+                    snapshots = BuildSnapshotsNoLock();
+                    message = $"Invalid skill format: '{skillInput}'.";
+                }
                 else
                 {
                     var validation = participant == RoomParticipant.PlayerOne
-                        ? _game.TryDeclare(normalizedSkill, param, stringParam)
-                        : _game.ETryDeclare(normalizedSkill, param, stringParam);
+                        ? _game.TryDeclare(skillData)
+                        : _game.ETryDeclare(skillData);
 
-                    Console.WriteLine($"[GameRoom] {username}: TryDeclare('{normalizedSkill}', param={param}, stringParam='{stringParam}') => {validation}");
+                    Console.WriteLine($"[GameRoom] {username}: TryDeclare('{skillData.SkillName}', param={skillData.Param}, stringParam='{skillData.StringParam}') => {validation}");
 
                     if (validation != SkillDeclareResult.Success)
                     {
@@ -114,11 +120,11 @@ namespace BlacksmithServer.Web.Realtime
                         var resSummary = string.Join(", ", resources.Select(r => $"{r.name}={r.quantity}"));
                         Console.WriteLine($"[GameRoom] {username}: validation failed. Available resources: [{resSummary}]");
                         snapshots = BuildSnapshotsNoLock();
-                        message = $"Skill '{normalizedSkill}' {validation}.";
+                        message = $"Skill '{skillInput}' {validation}.";
                     }
                     else
                     {
-                        SetPendingNoLock(participant, new PendingTurn(normalizedSkill, param, stringParam, false));
+                        SetPendingNoLock(participant, new PendingTurn(skillData, false));
                         shouldResolve = _playerOnePending != null && _playerTwoPending != null;
 
                         if (shouldResolve)
@@ -209,13 +215,14 @@ namespace BlacksmithServer.Web.Realtime
 
                 _roundDeadlineUtc = null;
 
-                var playerOneTurn = _playerOnePending ?? new PendingTurn("iron", 0, "", true);
-                var playerTwoTurn = _playerTwoPending ?? new PendingTurn("iron", 0, "", true);
+                var ironDefault = SkillDeclareData.Parse("iron")!;
+                var playerOneTurn = _playerOnePending ?? new PendingTurn(ironDefault, true);
+                var playerTwoTurn = _playerTwoPending ?? new PendingTurn(ironDefault, true);
 
                 _playerOnePending = null;
                 _playerTwoPending = null;
 
-                _game.Declare(playerOneTurn.SkillName, playerOneTurn.Param, playerTwoTurn.SkillName, playerTwoTurn.Param, playerOneTurn.StringParam, playerTwoTurn.StringParam);
+                _game.Declare(playerOneTurn.Data, playerTwoTurn.Data);
 
                 if (playerOneTurn.TimedOut)
                 {
@@ -229,12 +236,8 @@ namespace BlacksmithServer.Web.Realtime
 
                 _turns.Add(new TurnLog(
                     _turns.Count + 1,
-                    playerOneTurn.SkillName,
-                    playerOneTurn.Param,
-                    playerOneTurn.StringParam,
-                    playerTwoTurn.SkillName,
-                    playerTwoTurn.Param,
-                    playerTwoTurn.StringParam,
+                    playerOneTurn.Data,
+                    playerTwoTurn.Data,
                     playerOneTurn.TimedOut,
                     playerTwoTurn.TimedOut,
                     BuildTurnNote(playerOneTurn.TimedOut, playerTwoTurn.TimedOut)));
@@ -424,12 +427,8 @@ namespace BlacksmithServer.Web.Realtime
                     {
                         Index = turn.Index,
                         Result = "Continue",
-                        PlayerSkill = turn.PlayerOneSkill,
-                        PlayerParam = turn.PlayerOneParam,
-                        PlayerStringParam = turn.PlayerOneStringParam,
-                        EnemySkill = turn.PlayerTwoSkill,
-                        EnemyParam = turn.PlayerTwoParam,
-                        EnemyStringParam = turn.PlayerTwoStringParam,
+                        PlayerSkill = turn.PlayerOne.ToDisplayString(),
+                        EnemySkill = turn.PlayerTwo.ToDisplayString(),
                         PlayerTimedOut = turn.PlayerOneTimedOut,
                         EnemyTimedOut = turn.PlayerTwoTimedOut,
                         Note = turn.Note
@@ -440,12 +439,8 @@ namespace BlacksmithServer.Web.Realtime
                 {
                     Index = turn.Index,
                     Result = "Continue",
-                    PlayerSkill = turn.PlayerTwoSkill,
-                    PlayerParam = turn.PlayerTwoParam,
-                    PlayerStringParam = turn.PlayerTwoStringParam,
-                    EnemySkill = turn.PlayerOneSkill,
-                    EnemyParam = turn.PlayerOneParam,
-                    EnemyStringParam = turn.PlayerOneStringParam,
+                    PlayerSkill = turn.PlayerTwo.ToDisplayString(),
+                    EnemySkill = turn.PlayerOne.ToDisplayString(),
                     PlayerTimedOut = turn.PlayerTwoTimedOut,
                     EnemyTimedOut = turn.PlayerOneTimedOut,
                     Note = turn.Note
@@ -569,12 +564,6 @@ namespace BlacksmithServer.Web.Realtime
             };
         }
 
-        private static string NormalizeSkillName(string skillName)
-        {
-            var normalized = skillName.Trim().ToLowerInvariant();
-            return string.IsNullOrWhiteSpace(normalized) ? "iron" : normalized;
-        }
-
         private static string BuildTurnNote(bool playerOneTimedOut, bool playerTwoTimedOut)
         {
             if (playerOneTimedOut && playerTwoTimedOut)
@@ -607,16 +596,12 @@ namespace BlacksmithServer.Web.Realtime
             };
         }
 
-        private sealed record PendingTurn(string SkillName, int Param, string StringParam, bool TimedOut);
+        private sealed record PendingTurn(SkillDeclareData Data, bool TimedOut);
 
         private sealed record TurnLog(
             int Index,
-            string PlayerOneSkill,
-            int PlayerOneParam,
-            string PlayerOneStringParam,
-            string PlayerTwoSkill,
-            int PlayerTwoParam,
-            string PlayerTwoStringParam,
+            SkillDeclareData PlayerOne,
+            SkillDeclareData PlayerTwo,
             bool PlayerOneTimedOut,
             bool PlayerTwoTimedOut,
             string Note);

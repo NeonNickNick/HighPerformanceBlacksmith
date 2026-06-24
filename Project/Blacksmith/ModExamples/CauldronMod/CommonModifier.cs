@@ -13,12 +13,12 @@ namespace ModExamples.CauldronMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool CauldronCheck(ISkillContext sc)
+        private bool CauldronCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3f);
         }
         [IsEquipmentSkill]
-        private IDSLSourceFile Cauldron(ISkillContext sc)
+        private IDSLSourceFile Cauldron(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Cauldron()));
             Pen pen = sf => sf

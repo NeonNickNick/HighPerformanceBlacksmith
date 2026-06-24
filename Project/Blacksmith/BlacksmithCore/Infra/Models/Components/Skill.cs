@@ -51,7 +51,7 @@ namespace BlacksmithCore.Infra.Models.Components
         {
             _packages.Find(p => p.Name == packageName)?.SkillPackage.AvailableSkillNames.Remove(skillName.ToLower());
         }
-        public virtual SkillDeclareResult TryDeclare(string skillName, ISkillContext sc)
+        public virtual SkillDeclareResult TryDeclare(string skillName, ISkillCheckContext sc)
         {
             foreach (var package in _packages.Where(p => p.Flag.IsActive))
             {
@@ -70,7 +70,7 @@ namespace BlacksmithCore.Infra.Models.Components
             }
             return SkillDeclareResult.Illegal;
         }
-        public virtual IDSLSourceFile Declare(string skillName, ISkillContext sc)
+        public virtual IDSLSourceFile Declare(string skillName, ISkillCheckContext sc)
         {
             foreach (var package in _packages.Where(p => p.Flag.IsActive))
             {
@@ -124,7 +124,7 @@ namespace BlacksmithCore.Infra.Models.Components
                 }
             }
         }
-        public List<IDSLSourceFile> GetPassiveSkill(ISkillContext sc)
+        public List<IDSLSourceFile> GetPassiveSkill(ISkillCheckContext sc)
         {
             return _packages.Where(p => p.Flag.IsActive).Select(p => p.SkillPackage.PassiveSkill(sc)).ToList();
         }

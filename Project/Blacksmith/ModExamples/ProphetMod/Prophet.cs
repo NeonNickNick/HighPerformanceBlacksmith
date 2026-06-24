@@ -45,45 +45,45 @@ namespace ModExamples.ProphetMod
                         }
                     }
                 );
-        private bool CrystalCheck(ISkillContext sc)
+        private bool CrystalCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1.5f);
         }
-        private IDSLSourceFile Crystal(ISkillContext sc)
+        private IDSLSourceFile Crystal(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1.5f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Crystal());
             return DSL.CreateBy(pen);
         }
-        private bool CrystalBallCheck(ISkillContext sc)
+        private bool CrystalBallCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Crystal(), 2f)
                 && !sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.CrystalBall(), 1f);
         }
-        private IDSLSourceFile CrystalBall(ISkillContext sc)
+        private IDSLSourceFile CrystalBall(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2f, ResourceType.Instance.Crystal())
                 .WriteResource(1f, ResourceType.Instance.CrystalBall());
             return DSL.CreateBy(pen);
         }
-        private bool ForetoldCheck(ISkillContext sc)
+        private bool ForetoldCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Foretold(ISkillContext sc)
+        private IDSLSourceFile Foretold(ISkillCheckContext sc)
         {
             Pen pen = (sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron()))
                 + Dodge;
             return DSL.CreateBy(pen);
         }
-        private bool GreatestCautionCheck(ISkillContext sc)
+        private bool GreatestCautionCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Crystal(), 1f);
         }
-        private IDSLSourceFile GreatestCaution(ISkillContext sc)
+        private IDSLSourceFile GreatestCaution(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Crystal())
@@ -96,11 +96,11 @@ namespace ModExamples.ProphetMod
                 }, true);
             return DSL.CreateBy(pen);
         }
-        private bool RevelationCheck(ISkillContext sc)
+        private bool RevelationCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Revelation(ISkillContext sc)
+        private IDSLSourceFile Revelation(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -113,8 +113,8 @@ namespace ModExamples.ProphetMod
                 }, true);
             return DSL.CreateBy(pen);
         }
-        private bool AssertionCheck(ISkillContext sc) => true;
-        private IDSLSourceFile Assertion(ISkillContext sc)
+        private bool AssertionCheck(ISkillCheckContext sc) => true;
+        private IDSLSourceFile Assertion(ISkillCheckContext sc)
         {
             Pen pen = (sf => sf
                 .WriteFree(a =>
@@ -127,11 +127,11 @@ namespace ModExamples.ProphetMod
                 + Dodge;
             return DSL.CreateBy(pen);
         }
-        private bool CrystalWallCheck(ISkillContext sc)
+        private bool CrystalWallCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.CrystalBall(), 1f);
         }
-        private IDSLSourceFile CrystalWall(ISkillContext sc)
+        private IDSLSourceFile CrystalWall(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.CrystalBall())
@@ -139,29 +139,29 @@ namespace ModExamples.ProphetMod
                 .WriteDefense(7, new CrystalWall(), delayRounds: 1);
             return DSL.CreateBy(pen);
         }
-        private bool RefractionCheck(ISkillContext sc)
+        private bool RefractionCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.CrystalBall(), 1f);
         }
-        private IDSLSourceFile Refraction(ISkillContext sc)
+        private IDSLSourceFile Refraction(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(1, new PercentageReduction(baseline: 2));
             return DSL.CreateBy(pen);
         }
-        private bool UltimatumCheck(ISkillContext sc)
+        private bool UltimatumCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 5
+            return sc.SkillDeclareData.Param > 5
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.CrystalBall(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Crystal(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Ultimatum(ISkillContext sc)
+        private IDSLSourceFile Ultimatum(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.CrystalBall())
                 .UseResource(2f, ResourceType.Instance.Crystal())
-                .WriteAttack(12f, AttackType.Instance.Real(), delayRounds: sc.Param);
+                .WriteAttack(12f, AttackType.Instance.Real(), delayRounds: sc.SkillDeclareData.Param);
             return DSL.CreateBy(pen);
         }
     }

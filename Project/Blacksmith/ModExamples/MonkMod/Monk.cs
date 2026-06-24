@@ -20,23 +20,23 @@ namespace ModExamples.MonkMod
         private ClapStateVar<int> _gbcTimes = new(0);
         private ClapStateVar<float> _transmitPercent = new(0.5f);
         private ClapStateVar<bool> _mist = new(true);
-        private bool JadeCheck(ISkillContext sc)
+        private bool JadeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Jade(ISkillContext sc)
+        private IDSLSourceFile Jade(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Jade());
             return DSL.CreateBy(pen);
         }
-        private bool GhostStepCheck(ISkillContext sc)
+        private bool GhostStepCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 1f)
                 && _cloneNum.Value < 2;
         }
-        private IDSLSourceFile GhostStep(ISkillContext sc)
+        private IDSLSourceFile GhostStep(ISkillCheckContext sc)
         {
             Body clone = null!;
             Pen pen = sf => sf
@@ -94,11 +94,11 @@ namespace ModExamples.MonkMod
                     });
             return DSL.CreateBy(pen);
         }
-        private bool GoldenBellCoverCheck(ISkillContext sc)
+        private bool GoldenBellCoverCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 1f);
         }
-        private IDSLSourceFile GoldenBellCover(ISkillContext sc)
+        private IDSLSourceFile GoldenBellCover(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Jade())
@@ -106,12 +106,12 @@ namespace ModExamples.MonkMod
                 .WriteDefense(100f - 60f * _gbcTimes.Value, new PercentageReduction(baseline: 100));
             return DSL.CreateBy(pen);
         }
-        private bool MazeFistCheck(ISkillContext sc)
+        private bool MazeFistCheck(ISkillCheckContext sc)
         {
             return _cloneNum.Value > 0;
         }
         [HasAttack]
-        private IDSLSourceFile MazeFist(ISkillContext sc)
+        private IDSLSourceFile MazeFist(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteFree(source =>
@@ -138,13 +138,13 @@ namespace ModExamples.MonkMod
                         });
             return DSL.CreateBy(pen);
         }
-        private bool MistCheck(ISkillContext sc)
+        private bool MistCheck(ISkillCheckContext sc)
         {
             return _mist.Value
                 && _cloneNum.Value > 0
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Mist(ISkillContext sc)
+        private IDSLSourceFile Mist(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -177,12 +177,12 @@ namespace ModExamples.MonkMod
                 });
             return DSL.CreateBy(pen);
         }
-        private bool DisillusionmentCheck(ISkillContext sc)
+        private bool DisillusionmentCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Disillusionment(ISkillContext sc)
+        private IDSLSourceFile Disillusionment(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2f, ResourceType.Instance.Jade())

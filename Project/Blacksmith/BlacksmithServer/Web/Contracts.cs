@@ -89,11 +89,7 @@ namespace BlacksmithServer.Web
         public required int Index { get; set; }
         public required string Result { get; set; }
         public required string PlayerSkill { get; set; }
-        public required int PlayerParam { get; set; }
-        public required string PlayerStringParam { get; set; }
         public required string EnemySkill { get; set; }
-        public required int EnemyParam { get; set; }
-        public required string EnemyStringParam { get; set; }
         public required bool PlayerTimedOut { get; set; }
         public required bool EnemyTimedOut { get; set; }
         public string? Note { get; set; }

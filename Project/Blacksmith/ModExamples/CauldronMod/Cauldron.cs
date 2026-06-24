@@ -15,79 +15,79 @@ namespace ModExamples.CauldronMod
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Cauldron : MainProfession
     {
-        private bool FireCheck(ISkillContext sc)
+        private bool FireCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Fire(ISkillContext sc)
+        private IDSLSourceFile Fire(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Fire());
             return DSL.CreateBy(pen);
         }
-        private bool WaterCheck(ISkillContext sc)
+        private bool WaterCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Water(ISkillContext sc)
+        private IDSLSourceFile Water(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Water());
             return DSL.CreateBy(pen);
         }
-        private bool WoodCheck(ISkillContext sc)
+        private bool WoodCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Wood(ISkillContext sc)
+        private IDSLSourceFile Wood(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Wood());
             return DSL.CreateBy(pen);
         }
-        private bool EarthCheck(ISkillContext sc)
+        private bool EarthCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Earth(ISkillContext sc)
+        private IDSLSourceFile Earth(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(1f, ResourceType.Instance.Earth());
             return DSL.CreateBy(pen);
         }
-        private bool ExplosionCheck(ISkillContext sc)
+        private bool ExplosionCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile Explosion(ISkillContext sc)
+        private IDSLSourceFile Explosion(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Fire())
-                .WriteAttack(4f * sc.Param, AttackType.Instance.Magical());
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Fire())
+                .WriteAttack(4f * sc.SkillDeclareData.Param, AttackType.Instance.Magical());
             return DSL.CreateBy(pen);
         }
-        private bool IceBladeCheck(ISkillContext sc)
+        private bool IceBladeCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Water(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Water(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile IceBlade(ISkillContext sc)
+        private IDSLSourceFile IceBlade(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Water())
-                .WriteAttack(5f * sc.Param, AttackType.Instance.Physical());
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Water())
+                .WriteAttack(5f * sc.SkillDeclareData.Param, AttackType.Instance.Physical());
             return DSL.CreateBy(pen);
         }
-        private bool RegenerationCheck(ISkillContext sc)
+        private bool RegenerationCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wood(), 1f);
         }
-        private IDSLSourceFile Regeneration(ISkillContext sc)
+        private IDSLSourceFile Regeneration(ISkillCheckContext sc)
         {
             float begin = 1f;
             Pen pen = sf => sf
@@ -104,23 +104,23 @@ namespace ModExamples.CauldronMod
                             });
             return DSL.CreateBy(pen);
         }
-        private bool StoneShellCheck(ISkillContext sc)
+        private bool StoneShellCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Earth(), 1f);
         }
-        private IDSLSourceFile StoneShell(ISkillContext sc)
+        private IDSLSourceFile StoneShell(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Earth())
                 .WriteDefense(0f, new StoneShell());
             return DSL.CreateBy(pen);
         }
-        private bool LifeBurnCheck(ISkillContext sc)
+        private bool LifeBurnCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wood(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), 1f);
         }
-        private IDSLSourceFile LifeBurn(ISkillContext sc)
+        private IDSLSourceFile LifeBurn(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Fire())
@@ -170,13 +170,13 @@ namespace ModExamples.CauldronMod
             return DSL.CreateBy(pen);
         }
 
-        private bool FireRainCheck(ISkillContext sc)
+        private bool FireRainCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Earth(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile FireRain(ISkillContext sc)
+        private IDSLSourceFile FireRain(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Fire())
@@ -186,12 +186,12 @@ namespace ModExamples.CauldronMod
                 .WriteAttack(1f, AttackType.Instance.Real(), delayRounds: 0);
             return DSL.CreateBy(pen);
         }
-        private bool ElementalArmorCheck(ISkillContext sc)
+        private bool ElementalArmorCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Earth(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Water(), 1f);
         }
-        private IDSLSourceFile ElementalArmor(ISkillContext sc)
+        private IDSLSourceFile ElementalArmor(ISkillCheckContext sc)
         {
             HashSet<string> packageNames = new();
             Pen pen = sf => sf

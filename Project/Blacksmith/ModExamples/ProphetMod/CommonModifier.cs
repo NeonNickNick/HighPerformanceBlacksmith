@@ -13,12 +13,12 @@ namespace ModExamples.ProphetMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool ProphetCheck(ISkillContext sc)
+        private bool ProphetCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile Prophet(ISkillContext sc)
+        private IDSLSourceFile Prophet(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Prophet()));
             Pen pen = sf => sf

@@ -13,12 +13,12 @@ namespace ModExamples.MonkMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool MonkCheck(ISkillContext sc)
+        private bool MonkCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile Monk(ISkillContext sc)
+        private IDSLSourceFile Monk(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Monk()));
             Pen pen = sf => sf

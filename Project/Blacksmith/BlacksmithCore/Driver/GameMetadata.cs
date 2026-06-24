@@ -4,7 +4,7 @@ using BlacksmithCore.Infra.Profession;
 
 namespace BlacksmithCore.Driver
 {
-    public class GameMetadata : ICompileTimeMetadata
+    public class GameMetadata
     {
         public class SkillMetadata
         {

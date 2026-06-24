@@ -9,14 +9,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class BloodSigil : MainProfession
     {
-        private static bool BloodBladeCheck(ISkillContext sc)
+        private static bool BloodBladeCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 4;
         }
         [HasAttack(4)]
         [HasRecovery]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile BloodBlade(ISkillContext sc)
+        private static IDSLSourceFile BloodBlade(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .LoseHP(4)
@@ -26,35 +26,35 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     .WithBloodSuck(0.75f);
             return DSL.CreateBy(pen);
         }
-        private static bool BloodLustCheck(ISkillContext sc)
+        private static bool BloodLustCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 2;
         }
         [HasBuff]
         [Labels(Impression.Aggressive, Strength.Super)]
-        private static IDSLSourceFile BloodLust(ISkillContext sc)
+        private static IDSLSourceFile BloodLust(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .LoseHP(2)
                 .AddMark(nameof(BloodLust));
             return DSL.CreateBy(pen);
         }
-        private static bool BloodRecoveryCheck(ISkillContext sc) => true;
+        private static bool BloodRecoveryCheck(ISkillCheckContext sc) => true;
         [HasRecovery]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile BloodRecovery(ISkillContext sc)
+        private static IDSLSourceFile BloodRecovery(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteRecovery(1);
             return DSL.CreateBy(pen);
         }
-        private static bool BloodShieldCheck(ISkillContext sc)
+        private static bool BloodShieldCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 1;
         }
         [HasDefense]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile BloodShield(ISkillContext sc)
+        private static IDSLSourceFile BloodShield(ISkillCheckContext sc)
         {
             int power = (int)MathF.Ceiling(0.4f * sc.Self.Focus.Get<Health>().HP);
             Pen pen = sf => sf
@@ -69,14 +69,14 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 });
             return DSL.CreateBy(pen);
         }
-        private static bool BloodRageCheck(ISkillContext sc)
+        private static bool BloodRageCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Health>().HP > 1 && sc.Self.Focus.Get<Health>().HP <= 5;
         }
         [HasAttack(5)]
         [HasRecovery]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile BloodRage(ISkillContext sc)
+        private static IDSLSourceFile BloodRage(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .LoseHP(1)

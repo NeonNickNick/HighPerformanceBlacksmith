@@ -1,28 +1,3 @@
-function parseSkill(text) {
-    const raw = (text || '').trim();
-    if (!raw) return { name: 'iron', param: 0, stringParam: '' };
-
-    const tokens = raw.split(/\s+/);
-    const name = tokens[0] || 'iron';
-    let param = 0;
-    let stringParam = '';
-
-    for (let i = 1; i < tokens.length; i++) {
-        if (tokens[i] === '-p' && i + 1 < tokens.length) {
-            const parsed = Number.parseInt(tokens[i + 1], 10);
-            if (Number.isFinite(parsed) && parsed >= 0) {
-                param = parsed;
-                i++;
-            }
-        } else if (tokens[i] === '-s' && i + 1 < tokens.length) {
-            stringParam = tokens[i + 1];
-            i++;
-        }
-    }
-
-    return { name, param, stringParam };
-}
-
 async function withBusy(task) {
     if (State.busy) return;
 
@@ -73,15 +48,11 @@ strategy?.addEventListener('change', () => {
 });
 
 declareBtn?.addEventListener('click', () => withBusy(async () => {
-    const skill = parseSkill(skillInput?.value || '');
-    const enemySkill = parseSkill(eskill?.value || '');
+    const playerInput = (skillInput?.value || '').trim() || 'iron';
+    const enemyInput = (eskill?.value || '').trim() || 'iron';
     const response = await declareAPI({
-        skillName: skill.name,
-        param: skill.param,
-        esn: enemySkill.name,
-        ep: enemySkill.param,
-        stringParam: skill.stringParam,
-        esp: enemySkill.stringParam
+        playerInput: playerInput,
+        enemyInput: enemyInput
     });
 
     if (!response.ok) {

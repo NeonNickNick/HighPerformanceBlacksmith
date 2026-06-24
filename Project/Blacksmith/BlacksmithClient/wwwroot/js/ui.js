@@ -163,22 +163,15 @@ function buildTurnSummary(turn) {
         ? `<div class="summary-line think-time">AI thought for ${thinkTime}</div>`
         : '';
 
-    const playerStrParam = turn.playerStringParam ? `<div class="summary-line">StringParam: ${safeText(turn.playerStringParam)}</div>` : '';
-    const enemyStrParam = turn.enemyStringParam ? `<div class="summary-line">StringParam: ${safeText(turn.enemyStringParam)}</div>` : '';
-
     return `
         <div class="summary-card">
             <h3>Player Action</h3>
-            <div class="summary-line">Skill: ${safeText(turn.playerSkill)}</div>
-            <div class="summary-line">Param: ${safeText(turn.playerParam, 0)}</div>
-            ${playerStrParam}
+            <div class="summary-line">${safeText(turn.playerSkill)}</div>
             ${thinkHtml}
         </div>
         <div class="summary-card">
             <h3>Enemy Action</h3>
-            <div class="summary-line">Skill: ${safeText(turn.enemySkill)}</div>
-            <div class="summary-line">Param: ${safeText(turn.enemyParam, 0)}</div>
-            ${enemyStrParam}
+            <div class="summary-line">${safeText(turn.enemySkill)}</div>
         </div>
     `;
 }
@@ -204,7 +197,7 @@ function renderHistory() {
                 <span>Turn ${turn.index}</span>
                 <span>${resultLabel(turn.result)}${thinkBadge}</span>
             </div>
-            <div>You: ${turn.playerSkill} ${turn.playerParam}${turn.playerStringParam ? ' \"' + turn.playerStringParam + '\"' : ''} | Enemy: ${turn.enemySkill} ${turn.enemyParam}${turn.enemyStringParam ? ' \"' + turn.enemyStringParam + '\"' : ''}</div>
+            <div>You: ${turn.playerSkill} | Enemy: ${turn.enemySkill}</div>
         </button>
         `;
     }).join('');
@@ -234,7 +227,7 @@ function renderTurn() {
     if (turnCounterPill) turnCounterPill.textContent = turn ? `Turn ${turn.index}` : `Turn ${State.turns.length}`;
     if (actionText) {
         actionText.textContent = turn
-            ? `You used ${turn.playerSkill} ${turn.playerParam}${turn.playerStringParam ? ' "' + turn.playerStringParam + '"' : ''}. Enemy used ${turn.enemySkill} ${turn.enemyParam}${turn.enemyStringParam ? ' "' + turn.enemyStringParam + '"' : ''}.`
+            ? `You used ${turn.playerSkill}. Enemy used ${turn.enemySkill}.`
             : (State.gameStarted ? 'Battle initialized. Declare the first turn.' : 'No actions recorded yet.');
     }
     if (turnSummary) turnSummary.innerHTML = buildTurnSummary(turn);

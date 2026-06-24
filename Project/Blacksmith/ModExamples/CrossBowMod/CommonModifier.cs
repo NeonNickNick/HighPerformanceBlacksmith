@@ -13,12 +13,12 @@ namespace ModExamples.CrossBowMod
     [IsProfessionModifier(nameof(Common))]
     public partial class CommonModifier : ProfessionModifier
     {
-        private bool CrossBowCheck(ISkillContext sc)
+        private bool CrossBowCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile CrossBow(ISkillContext sc)
+        private IDSLSourceFile CrossBow(ISkillCheckContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new CrossBow()));
             Pen pen = sf => sf

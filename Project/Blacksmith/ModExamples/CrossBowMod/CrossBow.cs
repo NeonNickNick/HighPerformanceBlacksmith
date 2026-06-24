@@ -16,42 +16,42 @@ namespace ModExamples.CrossBowMod
     public partial class CrossBow : MainProfession
     {
         private ClapStateVar<bool> _aimed = new(false);
-        private bool CraftBoltCheck(ISkillContext sc)
+        private bool CraftBoltCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile CraftBolt(ISkillContext sc)
+        private IDSLSourceFile CraftBolt(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
                 .WriteResource(3f, ResourceType.Instance.Bolt());
             return DSL.CreateBy(pen);
         }
-        private bool BoltVolleyCheck(ISkillContext sc)
+        private bool BoltVolleyCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile BoltVolley(ISkillContext sc)
+        private IDSLSourceFile BoltVolley(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param, ResourceType.Instance.Bolt())
-                .WriteAttack(sc.Param, AttackType.Instance.Physical());
+                .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Bolt())
+                .WriteAttack(sc.SkillDeclareData.Param, AttackType.Instance.Physical());
             return DSL.CreateBy(pen);
         }
-        private bool AimCheck(ISkillContext sc) => true;
-        private IDSLSourceFile Aim(ISkillContext sc)
+        private bool AimCheck(ISkillCheckContext sc) => true;
+        private IDSLSourceFile Aim(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .WriteFree(source => _aimed.Set(true), true);
             return DSL.CreateBy(pen);
         }
-        private bool CriticalHitCheck(ISkillContext sc)
+        private bool CriticalHitCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile CriticalHit(ISkillContext sc)
+        private IDSLSourceFile CriticalHit(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Bolt())
@@ -60,24 +60,24 @@ namespace ModExamples.CrossBowMod
             _aimed.Reset();
             return DSL.CreateBy(pen);
         }
-        private bool ParryCheck(ISkillContext sc)
+        private bool ParryCheck(ISkillCheckContext sc)
         {
-            return sc.Param > 0 && sc.Param < 5 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.Param);
+            return sc.SkillDeclareData.Param > 0 && sc.SkillDeclareData.Param < 5 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.SkillDeclareData.Param);
         }
-        private IDSLSourceFile Parry(ISkillContext sc)
+        private IDSLSourceFile Parry(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
-                .UseResource(sc.Param * 0.5f, ResourceType.Instance.Bolt())
-                .WriteDefense(4.5f * sc.Param - 0.5f * sc.Param * sc.Param, new CommonReduction());
+                .UseResource(sc.SkillDeclareData.Param * 0.5f, ResourceType.Instance.Bolt())
+                .WriteDefense(4.5f * sc.SkillDeclareData.Param - 0.5f * sc.SkillDeclareData.Param * sc.SkillDeclareData.Param, new CommonReduction());
             return DSL.CreateBy(pen);
         }
-        private bool MarkingBoltCheck(ISkillContext sc)
+        private bool MarkingBoltCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile MarkingBolt(ISkillContext sc)
+        private IDSLSourceFile MarkingBolt(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Bolt())

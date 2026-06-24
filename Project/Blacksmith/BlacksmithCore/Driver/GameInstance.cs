@@ -6,23 +6,11 @@ using BlacksmithCore.Infra.Profession;
 
 namespace BlacksmithCore.Driver
 {
-    public class DefaultSkillContext : ISkillContext
+    public class DefaultSkillContext : ISkillCheckContext, ISkillExecuteContext
     {
-        public ISudoOperations SudoOperations { get; }
-        public string SkillName { get; }
-        public Community Self { get; }
-        public int Param { get; }
-        public string StringParam { get; }
-        public (string SkillName, int Param, string StringParam) History
-            => (SkillName, Param, StringParam);
-        public DefaultSkillContext(ISudoOperations sudoOperations, string skillName, Community self, int param, string stringParam)
-        {
-            SudoOperations = sudoOperations;
-            SkillName = skillName;
-            Self = self;
-            Param = param;
-            StringParam = stringParam;
-        }
+        public required ISudoOperations SudoOperations { get; init; }
+        public required Community Self { get; init; }
+        public required SkillDeclareData SkillDeclareData { get; init; }
     }
 
     public static class GameInstancePool
@@ -109,8 +97,6 @@ namespace BlacksmithCore.Driver
         {
             return community == Player;
         }
-        public IReadOnlyList<((string SkillName, int Param, string StringParam), (string SkillName, int Param, string StringParam))> SkillHistory
-            => History.SkillHistory;
         public GameInstance DeepCopy()
         {
             GameInstance res = GameInstancePool.RentWithDiagnostic();
@@ -127,25 +113,44 @@ namespace BlacksmithCore.Driver
             GameInstancePool.Return(this);
         }
 
-        public ICompileTimeMetadata CompileTimeMetadata => Metadata;
-        public SkillDeclareResult TryDeclare(string skillName, int param, string stringParam = "")
+        public SkillDeclareResult TryDeclare(SkillDeclareData skillDeclareData)
         {
-            DefaultSkillContext context = new(this, skillName, Player, param, stringParam);
-            return Player.Focus.Get<Skill>().TryDeclare(skillName, context);
+            var context = new DefaultSkillContext()
+            {
+                Self = Player,
+                SudoOperations = this,
+                SkillDeclareData = skillDeclareData
+            };
+            return Player.Focus.Get<Skill>().TryDeclare(skillDeclareData.SkillName, context);
         }
-        public SkillDeclareResult ETryDeclare(string skillName, int param, string stringParam = "")
+        public SkillDeclareResult ETryDeclare(SkillDeclareData skillDeclareData)
         {
-            DefaultSkillContext context = new(this, skillName, Enemy, param, stringParam);
-            return Enemy.Focus.Get<Skill>().TryDeclare(skillName, context);
+            var context = new DefaultSkillContext()
+            {
+                Self = Enemy,
+                SudoOperations = this,
+                SkillDeclareData = skillDeclareData
+            };
+            return Enemy.Focus.Get<Skill>().TryDeclare(skillDeclareData.SkillName, context);
         }
 
-        public void Declare(string skillName, int param, string esn, int ep, string stringParam = "", string esp = "")
+        public void Declare(SkillDeclareData playerSkill, SkillDeclareData enemySkill)
         {
-            Metadata.UpdateCurrentSkill(skillName, esn);
-            Player.CurrentSkillName = skillName;
-            Enemy.CurrentSkillName = esn;
-            var playerContext = new DefaultSkillContext(this, skillName, Player, param, stringParam);
-            var enemyContext = new DefaultSkillContext(this, esn, Enemy, ep, esp);
+            Metadata.UpdateCurrentSkill(playerSkill.SkillName, enemySkill.SkillName);
+            Player.CurrentSkillName = playerSkill.SkillName;
+            Enemy.CurrentSkillName = enemySkill.SkillName;
+            var playerContext = new DefaultSkillContext()
+            {
+                Self = Player,
+                SudoOperations = this,
+                SkillDeclareData = playerSkill
+            };
+            var enemyContext = new DefaultSkillContext()
+            {
+                Self = Enemy,
+                SudoOperations = this,
+                SkillDeclareData = enemySkill
+            };
 
             var ps = Player.Focus.Get<Skill>();
             var psfs = ps.GetPassiveSkill(playerContext);
@@ -153,7 +158,7 @@ namespace BlacksmithCore.Driver
             {
                 psfs.AddRange(s.Get<Skill>().GetPassiveSkill(playerContext));
             }
-            psfs.Add(ps.Declare(skillName, playerContext));
+            psfs.Add(ps.Declare(playerSkill.SkillName, playerContext));
 
             var es = Enemy.Focus.Get<Skill>();
             var esfs = es.GetPassiveSkill(enemyContext);
@@ -161,10 +166,10 @@ namespace BlacksmithCore.Driver
             {
                 esfs.AddRange(s.Get<Skill>().GetPassiveSkill(playerContext));
             }
-            esfs.Add(es.Declare(esn, enemyContext));
+            esfs.Add(es.Declare(enemySkill.SkillName, enemyContext));
 
             Judger.Judge(psfs, esfs);
-            History.SkillHistory.Add((playerContext.History, enemyContext.History));
+            History.SkillHistory.Add((playerSkill, enemySkill));
         }
     }
 }

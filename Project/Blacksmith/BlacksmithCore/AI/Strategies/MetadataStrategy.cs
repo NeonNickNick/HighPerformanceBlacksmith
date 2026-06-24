@@ -22,32 +22,32 @@ namespace BlacksmithCore.AI.Strategies
             _main = gameInstance;
         }
 
-        public (string skillName, int param, string stringParam) ChooseSkill()
+        public SkillDeclareData ChooseSkill()
         {
-            var set = new HashSet<(string skillName, int param, string stringParam)>();
+            var set = new HashSet<SkillDeclareData>();
             var names = _main.Enemy.Focus.Get<Skill>().GetAvailableSkillNames();
             foreach (var n in names)
             {
                 if (ProfessionRegistry.SkillMetadataDict[n].FirstOrDefault(s => s is IsInfinite _) != null)
                 {
                     int layer = 1;
-                    while (_main.ETryDeclare(n, layer) == SkillDeclareResult.Success)
+                    while (_main.ETryDeclare(SkillDeclareData.Parse($"{n}(p:{layer})")!) == SkillDeclareResult.Success)
                     {
                         layer++;
                     }
                     layer--;
-                    set.Add((n, layer, ""));
+                    set.Add(SkillDeclareData.Parse($"{n}(p:{layer})")!);
                     if (layer > 1)
                     {
                         layer--;
-                        set.Add((n, layer, ""));
+                        set.Add(SkillDeclareData.Parse($"{n}(p:{layer})")!);
                     }
                 }
                 else
                 {
-                    if (_main.ETryDeclare(n, 0) == SkillDeclareResult.Success)
+                    if (_main.ETryDeclare(SkillDeclareData.Parse(n)!) == SkillDeclareResult.Success)
                     {
-                        set.Add((n, 0, ""));
+                        set.Add(SkillDeclareData.Parse(n)!);
                     }
                 }
 
@@ -55,7 +55,7 @@ namespace BlacksmithCore.AI.Strategies
             Dictionary<Labels, string> dict = new();
             foreach (var s in set)
             {
-                dict[(Labels)ProfessionRegistry.SkillMetadataDict[s.skillName].FirstOrDefault(m => m is Labels _)!] = s.skillName;
+                dict[(Labels)ProfessionRegistry.SkillMetadataDict[s.SkillName].FirstOrDefault(m => m is Labels _)!] = s.SkillName;
             }
 
             var ls = dict.Keys.ToList();
@@ -104,9 +104,9 @@ namespace BlacksmithCore.AI.Strategies
                 name = dict[supers[_random.Next(supers.Count)]];
             }
 
-            var all = set.Where(s => s.skillName == name).ToList();
-            var param = all[_random.Next(all.Count)].param;
-            return (name, param, "");
+            var all = set.Where(s => s.SkillName == name).ToList();
+            var chosen = all[_random.Next(all.Count)];
+            return chosen;
         }
     }
 }

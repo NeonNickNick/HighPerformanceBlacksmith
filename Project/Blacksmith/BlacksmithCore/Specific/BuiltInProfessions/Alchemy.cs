@@ -11,13 +11,13 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Alchemy : MainProfession
     {
-        private static bool MidasTouchCheck(ISkillContext sc)
+        private static bool MidasTouchCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1, true);
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile MidasTouch(ISkillContext sc)
+        private static IDSLSourceFile MidasTouch(ISkillCheckContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron(), true)
