@@ -9,9 +9,12 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Driver : MainProfession
     {
-        public override IDSLSourceFile PassiveSkillImpl(ISkillCheckContext sc)
+        public override IDSLSourceFile PassiveSkillImpl(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
+                .Query(
+                    source => source.Focus.Get<Resource>().Query(ResourceType.Instance.Time()),
+                    out var lazyTime)
                 .WriteDefense(new()
                 {
                     Name = nameof(Driver),
@@ -25,9 +28,10 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     Name = "TimeShield",
                     AnalyzerKey = nameof(StandardAnalyzers.DefaultReduction),
                     Type = DefenseType.Instance.RealReduction(),
-                    Power = (int)MathF.Min(5, sc.Self.Focus.Get<Resource>().Query(ResourceType.Instance.Time()) * 2),
+                    Power = 0,
                     Clock = new()
-                });
+                })
+                .WithModify(last => last.Defense.Power = (int)MathF.Min(5, lazyTime.Value * 2));
             return DSL.CreateBy(pen);
         }
         private static bool SpaceAttackCheck(ISkillCheckContext sc)
@@ -37,7 +41,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasAttack(12)]
         [IsInfinite]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile SpaceAttack(ISkillCheckContext sc)
+        private static IDSLSourceFile SpaceAttack(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Space())
@@ -55,7 +59,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Space2Time(ISkillCheckContext sc)
+        private static IDSLSourceFile Space2Time(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Space())
@@ -80,7 +84,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Time2Space(ISkillCheckContext sc)
+        private static IDSLSourceFile Time2Space(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Time())
@@ -104,7 +108,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [IsInfinite]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile SpaceBarrier(ISkillCheckContext sc)
+        private static IDSLSourceFile SpaceBarrier(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Iron())

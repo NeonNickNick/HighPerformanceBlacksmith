@@ -20,7 +20,7 @@ namespace ModExamples.CrossBowMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile CraftBolt(ISkillCheckContext sc)
+        private IDSLSourceFile CraftBolt(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -32,7 +32,7 @@ namespace ModExamples.CrossBowMod
             return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile BoltVolley(ISkillCheckContext sc)
+        private IDSLSourceFile BoltVolley(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Bolt())
@@ -40,7 +40,7 @@ namespace ModExamples.CrossBowMod
             return DSL.CreateBy(pen);
         }
         private bool AimCheck(ISkillCheckContext sc) => true;
-        private IDSLSourceFile Aim(ISkillCheckContext sc)
+        private IDSLSourceFile Aim(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteFree(source => _aimed.Set(true), true);
@@ -51,7 +51,7 @@ namespace ModExamples.CrossBowMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Bolt(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile CriticalHit(ISkillCheckContext sc)
+        private IDSLSourceFile CriticalHit(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Bolt())
@@ -64,7 +64,7 @@ namespace ModExamples.CrossBowMod
         {
             return sc.SkillDeclareData.Param > 0 && sc.SkillDeclareData.Param < 5 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), sc.SkillDeclareData.Param);
         }
-        private IDSLSourceFile Parry(ISkillCheckContext sc)
+        private IDSLSourceFile Parry(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param * 0.5f, ResourceType.Instance.Bolt())
@@ -77,7 +77,7 @@ namespace ModExamples.CrossBowMod
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile MarkingBolt(ISkillCheckContext sc)
+        private IDSLSourceFile MarkingBolt(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Bolt())

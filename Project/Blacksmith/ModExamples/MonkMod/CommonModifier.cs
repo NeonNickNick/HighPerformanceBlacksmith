@@ -18,7 +18,7 @@ namespace ModExamples.MonkMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile Monk(ISkillCheckContext sc)
+        private IDSLSourceFile Monk(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Monk()));
             Pen pen = sf => sf

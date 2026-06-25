@@ -16,7 +16,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(4)]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Strike(ISkillCheckContext sc)
+        private static IDSLSourceFile Strike(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -32,7 +32,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(8)]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile DoubleStrike(ISkillCheckContext sc)
+        private static IDSLSourceFile DoubleStrike(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Iron())
@@ -49,7 +49,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasAttack(11)]
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile TripleStrike(ISkillCheckContext sc)
+        private static IDSLSourceFile TripleStrike(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
@@ -67,7 +67,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(2)]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile APShell(ISkillCheckContext sc)
+        private static IDSLSourceFile APShell(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -82,7 +82,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasAttack(1)]
         [HasDefense]
         [Labels(Impression.Robust, Strength.Useless)]
-        private static IDSLSourceFile CannonBarrel(ISkillCheckContext sc)
+        private static IDSLSourceFile CannonBarrel(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(new()

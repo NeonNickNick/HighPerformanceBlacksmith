@@ -18,7 +18,7 @@ namespace ModExamples.CrossBowMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile CrossBow(ISkillCheckContext sc)
+        private IDSLSourceFile CrossBow(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new CrossBow()));
             Pen pen = sf => sf

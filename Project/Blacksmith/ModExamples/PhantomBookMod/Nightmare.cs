@@ -17,13 +17,13 @@ namespace ModExamples.PhantomBookMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile DreamDive(ISkillCheckContext sc)
+        private IDSLSourceFile DreamDive(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())
                 .WriteAttack(2f, AttackType.Instance.Real())
                 .WriteDefense(5f, new CommonReduction())
-                .WriteRecovery(1)
+                .GainHP(1)
                 .WriteResource(1f, ResourceType.Instance.Spirit())
                 .WriteDefense(0f, new MagicalImmunity());
             return DSL.CreateBy(pen);
@@ -34,7 +34,7 @@ namespace ModExamples.PhantomBookMod
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Materialize(ISkillCheckContext sc)
+        private IDSLSourceFile Materialize(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())
@@ -49,7 +49,7 @@ namespace ModExamples.PhantomBookMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile ClingingHaunt(ISkillCheckContext sc)
+        private IDSLSourceFile ClingingHaunt(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Spirit())
@@ -62,11 +62,11 @@ namespace ModExamples.PhantomBookMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Spirit(), 1f);
         }
-        private IDSLSourceFile Channeling(ISkillCheckContext sc)
+        private IDSLSourceFile Channeling(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Spirit())
-                .WriteRecovery(3)
+                .GainHP(3)
                 .WriteDefense(2f, new CommonReduction())
                 .WriteDefense(0f, new MagicalImmunity());
             return DSL.CreateBy(pen);

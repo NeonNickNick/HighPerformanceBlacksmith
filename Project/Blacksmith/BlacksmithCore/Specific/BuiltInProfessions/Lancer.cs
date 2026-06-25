@@ -44,7 +44,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                         Clock = new()
                     },
                     ifUndo: () => layerNums.Value[Lancer.Keys.DragonTooth] <= 0)
-                    .WriteRecovery(2, ifUndo: () => layerNums.Value[Lancer.Keys.TyrantDestruction] <= 0)
+                    .GainHP(2, ifUndo: () => layerNums.Value[Lancer.Keys.TyrantDestruction] <= 0)
                     .LoseMHP(1, ifUndo: () => layerNums.Value[Lancer.Keys.TripleStab] <= 0)
                     .WriteAttack(1, AttackType.Instance.Real(), 
                     delayRounds: 0, ifUndo: () => layerNums.Value[Lancer.Keys.TripleStab] <= 0)
@@ -78,7 +78,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Aggressive, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile SkyStrike(ISkillCheckContext sc)
+        private static IDSLSourceFile SkyStrike(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -96,7 +96,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile DragonTooth(ISkillCheckContext sc)
+        private static IDSLSourceFile DragonTooth(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -120,7 +120,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile TyrantDestruction(ISkillCheckContext sc)
+        private static IDSLSourceFile TyrantDestruction(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -138,7 +138,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasBuff]
         [Labels(Impression.Robust, Strength.Strong)]
         [IsAnalyzerAlias(nameof(StandardAnalyzers.DefaultAttack))]
-        private static IDSLSourceFile TripleStab(ISkillCheckContext sc)
+        private static IDSLSourceFile TripleStab(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -156,7 +156,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(10)]
         [Labels(Impression.Aggressive, Strength.Strong)]
-        private static IDSLSourceFile RisingDragon(ISkillCheckContext sc)
+        private static IDSLSourceFile RisingDragon(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .TakeMark(nameof(Charge), out var layerNum)
@@ -203,7 +203,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         */
         [HasBuff]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile Charge(ISkillCheckContext sc)
+        private static IDSLSourceFile Charge(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .CountMark(nameof(Charge), out var layerNum)

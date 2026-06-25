@@ -18,7 +18,7 @@ namespace ModExamples.PhantomBookMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2.5f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile PhantomBook(ISkillCheckContext sc)
+        private IDSLSourceFile PhantomBook(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new PhantomBook()));
             Pen pen = sf => sf

@@ -20,7 +20,7 @@ namespace ModExamples.PhantomBookMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 0.5f);
         }
-        private IDSLSourceFile Fantasia(ISkillCheckContext sc)
+        private IDSLSourceFile Fantasia(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
@@ -50,7 +50,7 @@ namespace ModExamples.PhantomBookMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 2f);
         }
         [IsExperimental]
-        private IDSLSourceFile Association(ISkillCheckContext sc)
+        private IDSLSourceFile Association(ISkillExecuteContext sc)
         {
             string expectedSkill = sc.SkillDeclareData.StringParam;
             var swapInstance = sc.SudoOperations.DeepCopy();
@@ -72,7 +72,7 @@ namespace ModExamples.PhantomBookMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 2f);
         }
         [IsExperimental]
-        private IDSLSourceFile Hallucinate(ISkillCheckContext sc)
+        private IDSLSourceFile Hallucinate(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                .UseResource(2f, ResourceType.Instance.Dream())
@@ -91,7 +91,7 @@ namespace ModExamples.PhantomBookMod
         }
         [IsExperimental]
         [IsHighCost]
-        private IDSLSourceFile Awakening(ISkillCheckContext sc)
+        private IDSLSourceFile Awakening(ISkillExecuteContext sc)
         {
             var sandBoxInstance = sc.SudoOperations.DeepCopy(preRounds: 3);
             Body copiedBody = sc.SudoOperations.IsPlayer(sc.Self) ? sandBoxInstance.Player.Focus : sandBoxInstance.Enemy.Focus;
@@ -108,11 +108,11 @@ namespace ModExamples.PhantomBookMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Dream(), 1f);
         }
-        private IDSLSourceFile Illusion(ISkillCheckContext sc)
+        private IDSLSourceFile Illusion(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())
-                .WriteRecovery(5);
+                .GainHP(5);
             return DSL.CreateBy(pen);
         }
         private bool NightmareCheck(ISkillCheckContext sc)
@@ -122,7 +122,7 @@ namespace ModExamples.PhantomBookMod
         }
         [IsExperimental]
         [IsEquipmentSkill]
-        private IDSLSourceFile Nightmare(ISkillCheckContext sc)
+        private IDSLSourceFile Nightmare(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Dream())

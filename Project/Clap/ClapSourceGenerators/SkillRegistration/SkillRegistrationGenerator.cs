@@ -50,8 +50,9 @@ namespace ClapSourceGenerators.SkillRegistration
 
             var compilation = ctx.SemanticModel.Compilation;
             var skillContextType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.Profession.ISkillCheckContext");
+            var executeContextType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.Profession.ISkillExecuteContext");
             var dslSourceFileType = compilation.GetTypeByMetadataName("BlacksmithCore.Infra.DSL.IDSLSourceFile");
-            if (skillContextType == null || dslSourceFileType == null)
+            if (skillContextType == null || executeContextType == null || dslSourceFileType == null)
                 return null;
 
             var methods = symbol.GetMembers()
@@ -90,7 +91,7 @@ namespace ClapSourceGenerators.SkillRegistration
                     m.Name == skillName &&
                     m.Parameters.Length == 1 &&
                     SymbolEqualityComparer.Default.Equals(
-                        m.Parameters[0].Type, skillContextType) &&
+                        m.Parameters[0].Type, executeContextType) &&
                     SymbolEqualityComparer.Default.Equals(
                         m.ReturnType, dslSourceFileType));
 
@@ -108,7 +109,7 @@ namespace ClapSourceGenerators.SkillRegistration
                     m.Name == skillName &&
                     m.Parameters.Length == 1 &&
                     SymbolEqualityComparer.Default.Equals(
-                        m.Parameters[0].Type, skillContextType));
+                        m.Parameters[0].Type, executeContextType));
 
                 if (nearMiss != null)
                 {
@@ -127,7 +128,7 @@ namespace ClapSourceGenerators.SkillRegistration
                         method.Name,
                         skillName,
                         dslSourceFileType.ToDisplayString(),
-                        skillContextType.ToDisplayString()));
+                        executeContextType.ToDisplayString()));
                 }
             }
 

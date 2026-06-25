@@ -17,7 +17,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile MidasTouch(ISkillCheckContext sc)
+        private static IDSLSourceFile MidasTouch(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron(), true)

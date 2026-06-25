@@ -24,7 +24,7 @@ namespace ModExamples.MonkMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Jade(ISkillCheckContext sc)
+        private IDSLSourceFile Jade(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -36,7 +36,7 @@ namespace ModExamples.MonkMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 1f)
                 && _cloneNum.Value < 2;
         }
-        private IDSLSourceFile GhostStep(ISkillCheckContext sc)
+        private IDSLSourceFile GhostStep(ISkillExecuteContext sc)
         {
             Body clone = null!;
             Pen pen = sf => sf
@@ -98,7 +98,7 @@ namespace ModExamples.MonkMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 1f);
         }
-        private IDSLSourceFile GoldenBellCover(ISkillCheckContext sc)
+        private IDSLSourceFile GoldenBellCover(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Jade())
@@ -111,7 +111,7 @@ namespace ModExamples.MonkMod
             return _cloneNum.Value > 0;
         }
         [HasAttack]
-        private IDSLSourceFile MazeFist(ISkillCheckContext sc)
+        private IDSLSourceFile MazeFist(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteFree(source =>
@@ -144,7 +144,7 @@ namespace ModExamples.MonkMod
                 && _cloneNum.Value > 0
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Mist(ISkillCheckContext sc)
+        private IDSLSourceFile Mist(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -182,7 +182,7 @@ namespace ModExamples.MonkMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Jade(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Disillusionment(ISkillCheckContext sc)
+        private IDSLSourceFile Disillusionment(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2f, ResourceType.Instance.Jade())

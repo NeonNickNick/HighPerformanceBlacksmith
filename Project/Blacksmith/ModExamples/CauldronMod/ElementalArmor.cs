@@ -11,14 +11,14 @@ namespace ModExamples.CauldronMod
     {
         private bool HammerCheck(ISkillCheckContext sc) => true;
         [HasAttack]
-        private IDSLSourceFile Hammer(ISkillCheckContext sc)
+        private IDSLSourceFile Hammer(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteAttack(6f, AttackType.Instance.Physical());
             return DSL.CreateBy(pen);
         }
         private bool GuardCheck(ISkillCheckContext sc) => true;
-        private IDSLSourceFile Guard(ISkillCheckContext sc)
+        private IDSLSourceFile Guard(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(8f, new CommonReduction());

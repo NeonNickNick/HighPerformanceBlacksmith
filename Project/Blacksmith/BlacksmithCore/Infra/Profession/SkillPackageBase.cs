@@ -1,4 +1,7 @@
 using BlacksmithCore.Infra.DSL;
+using BlacksmithCore.Infra.Models.Components;
+using BlacksmithCore.Infra.Models.Entites;
+using BlacksmithCore.Specific.BuiltInProfessions;
 
 namespace BlacksmithCore.Infra.Profession
 {
@@ -8,11 +11,11 @@ namespace BlacksmithCore.Infra.Profession
     {
         protected HashSet<string> _availableSkillNames = new();
         private readonly Dictionary<string, Func<ISkillCheckContext, bool>> _skillChecker = new();
-        private readonly Dictionary<string, Func<ISkillCheckContext, IDSLSourceFile>> _skillSourceFileGenerator = new();
+        private readonly Dictionary<string, Func<ISkillExecuteContext, IDSLSourceFile>> _skillSourceFileGenerator = new();
 
         public HashSet<string> AvailableSkillNames => _availableSkillNames;
         public Dictionary<string, Func<ISkillCheckContext, bool>> SkillChecker => _skillChecker;
-        public Dictionary<string, Func<ISkillCheckContext, IDSLSourceFile>> SkillSourceFileGenerator => _skillSourceFileGenerator;
+        public Dictionary<string, Func<ISkillExecuteContext, IDSLSourceFile>> SkillSourceFileGenerator => _skillSourceFileGenerator;
 
         protected SkillPackageBase()
         {
@@ -22,7 +25,7 @@ namespace BlacksmithCore.Infra.Profession
         protected void RegistSkill(
             string skillName,
             Func<ISkillCheckContext, bool> checker,
-            Func<ISkillCheckContext, IDSLSourceFile> generator)
+            Func<ISkillExecuteContext, IDSLSourceFile> generator)
         {
             _availableSkillNames.Add(skillName);
             _skillChecker.Add(skillName, checker);
@@ -31,13 +34,13 @@ namespace BlacksmithCore.Infra.Profession
         protected virtual void RegistSkills() { }
         public virtual void RegistAnalyzers() { }
 
-        public IDSLSourceFile PassiveSkill(ISkillCheckContext sc)
+        public IDSLSourceFile PassiveSkill(ISkillExecuteContext sc)
         {
             var sf = PassiveSkillImpl(sc);
             sf.IsPassive = true;
             return sf;
         }
-        public virtual IDSLSourceFile PassiveSkillImpl(ISkillCheckContext sc)
+        public virtual IDSLSourceFile PassiveSkillImpl(ISkillExecuteContext sc)
         {
             return new DSL.SourceFile();
         }

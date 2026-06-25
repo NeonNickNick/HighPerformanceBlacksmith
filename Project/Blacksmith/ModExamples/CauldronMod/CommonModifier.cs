@@ -18,7 +18,7 @@ namespace ModExamples.CauldronMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3f);
         }
         [IsEquipmentSkill]
-        private IDSLSourceFile Cauldron(ISkillCheckContext sc)
+        private IDSLSourceFile Cauldron(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Cauldron()));
             Pen pen = sf => sf

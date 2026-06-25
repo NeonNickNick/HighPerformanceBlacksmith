@@ -19,7 +19,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Fire(ISkillCheckContext sc)
+        private IDSLSourceFile Fire(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -30,7 +30,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Water(ISkillCheckContext sc)
+        private IDSLSourceFile Water(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -41,7 +41,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Wood(ISkillCheckContext sc)
+        private IDSLSourceFile Wood(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -52,7 +52,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
-        private IDSLSourceFile Earth(ISkillCheckContext sc)
+        private IDSLSourceFile Earth(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Iron())
@@ -64,7 +64,7 @@ namespace ModExamples.CauldronMod
             return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile Explosion(ISkillCheckContext sc)
+        private IDSLSourceFile Explosion(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Fire())
@@ -76,7 +76,7 @@ namespace ModExamples.CauldronMod
             return sc.SkillDeclareData.Param > 0 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Water(), sc.SkillDeclareData.Param);
         }
         [HasAttack]
-        private IDSLSourceFile IceBlade(ISkillCheckContext sc)
+        private IDSLSourceFile IceBlade(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Water())
@@ -87,7 +87,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wood(), 1f);
         }
-        private IDSLSourceFile Regeneration(ISkillCheckContext sc)
+        private IDSLSourceFile Regeneration(ISkillExecuteContext sc)
         {
             float begin = 1f;
             Pen pen = sf => sf
@@ -108,7 +108,7 @@ namespace ModExamples.CauldronMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Earth(), 1f);
         }
-        private IDSLSourceFile StoneShell(ISkillCheckContext sc)
+        private IDSLSourceFile StoneShell(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Earth())
@@ -120,7 +120,7 @@ namespace ModExamples.CauldronMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wood(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), 1f);
         }
-        private IDSLSourceFile LifeBurn(ISkillCheckContext sc)
+        private IDSLSourceFile LifeBurn(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Fire())
@@ -176,7 +176,7 @@ namespace ModExamples.CauldronMod
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Fire(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile FireRain(ISkillCheckContext sc)
+        private IDSLSourceFile FireRain(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1f, ResourceType.Instance.Fire())
@@ -191,7 +191,7 @@ namespace ModExamples.CauldronMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Earth(), 1f)
                 && sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Water(), 1f);
         }
-        private IDSLSourceFile ElementalArmor(ISkillCheckContext sc)
+        private IDSLSourceFile ElementalArmor(ISkillExecuteContext sc)
         {
             HashSet<string> packageNames = new();
             Pen pen = sf => sf

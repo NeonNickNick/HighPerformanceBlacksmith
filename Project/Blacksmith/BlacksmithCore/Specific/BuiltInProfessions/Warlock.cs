@@ -19,7 +19,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Magic(ISkillCheckContext sc)
+        private static IDSLSourceFile Magic(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
@@ -36,7 +36,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasAttack(2)]
         [IsInfinite]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile MagicAttack(ISkillCheckContext sc)
+        private static IDSLSourceFile MagicAttack(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param, ResourceType.Instance.Magic())
@@ -48,7 +48,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
 
         private bool MuteCheck(ISkillCheckContext sc) => true;
         [Labels(Impression.Aggressive, Strength.Super)]
-        private static IDSLSourceFile Mute(ISkillCheckContext sc)
+        private static IDSLSourceFile Mute(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                .WriteEffect(
@@ -70,7 +70,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasResource]
         [Labels(Impression.Robust, Strength.Super)]
-        private static IDSLSourceFile Sacrifice(ISkillCheckContext sc)
+        private static IDSLSourceFile Sacrifice(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .LoseHP(1)
@@ -93,7 +93,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [IsEquipmentSkill]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Alchemy(ISkillCheckContext sc)
+        private static IDSLSourceFile Alchemy(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2.5f, ResourceType.Instance.Iron())

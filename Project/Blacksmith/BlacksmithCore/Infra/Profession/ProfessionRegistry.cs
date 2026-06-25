@@ -59,7 +59,7 @@ namespace BlacksmithCore.Infra.Profession
                 return method.IsPrivate
                     && method.ReturnType == typeof(IDSLSourceFile)
                     && method.GetParameters() is { Length: 1 } parameters
-                    && parameters[0].ParameterType == typeof(ISkillCheckContext);
+                    && parameters[0].ParameterType == typeof(ISkillExecuteContext);
             }
             var minfos = package.GetType().GetMethods(
                 BindingFlags.NonPublic | BindingFlags.Static

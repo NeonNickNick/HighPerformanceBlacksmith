@@ -18,7 +18,7 @@ namespace ModExamples.ProphetMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 2f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile Prophet(ISkillCheckContext sc)
+        private IDSLSourceFile Prophet(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new Prophet()));
             Pen pen = sf => sf

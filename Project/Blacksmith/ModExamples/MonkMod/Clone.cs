@@ -9,7 +9,7 @@ namespace ModExamples.MonkMod
     public partial class Clone : MainProfession
     {
         private ClapStateVar<int> _gbcTimes = new(0);
-        public override IDSLSourceFile PassiveSkillImpl(ISkillCheckContext sc)
+        public override IDSLSourceFile PassiveSkillImpl(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteFree(a => _gbcTimes.Increment(), true)

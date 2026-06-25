@@ -18,7 +18,7 @@ namespace ModExamples.WineGlassMod
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1.5f);
         }
         [IsProfessionSkill]
-        private IDSLSourceFile WineGlass(ISkillCheckContext sc)
+        private IDSLSourceFile WineGlass(ISkillExecuteContext sc)
         {
             sc.Self.Focus.Get<Skill>().AddPackage(new(new WineGlass()));
             Pen pen = sf => sf

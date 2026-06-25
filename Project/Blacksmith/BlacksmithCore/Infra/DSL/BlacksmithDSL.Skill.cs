@@ -1,6 +1,7 @@
 using System.Formats.Tar;
 using System.Numerics;
 using System.Reflection.Metadata.Ecma335;
+using System.Xml.Linq;
 using BlacksmithCore.Infra.Judgement;
 using BlacksmithCore.Infra.Judgement.Core;
 using BlacksmithCore.Infra.Models.Components;
@@ -8,7 +9,9 @@ using BlacksmithCore.Infra.Models.Components.AnalyzableDatas;
 using BlacksmithCore.Infra.Models.Components.AnalyzedObjects;
 using BlacksmithCore.Infra.Models.Core;
 using BlacksmithCore.Infra.Models.Entites;
+using BlacksmithCore.Infra.Profession;
 using BlacksmithCore.Infra.Utils;
+using BlacksmithCore.Specific.BuiltInProfessions;
 namespace BlacksmithCore.Infra.DSL
 {
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
@@ -139,19 +142,6 @@ namespace BlacksmithCore.Infra.DSL
                 return SwitchState<AttackFile>();
             }
 
-            public RecoveryFile WriteRecovery(int power, Func<bool>? ifUndo = null)
-            {
-                ifUndo ??= DefaultIfUndo;
-                _sentences.Add(new((source) =>
-                {
-                    if (ifUndo())
-                    {
-                        return;
-                    }
-                    source.Focus.Get<Health>().GainHP(power);
-                }, SentenceType.Recovery, StructureType.Main));
-                return SwitchState<RecoveryFile>();
-            }
             public DefenseFile WriteDefense(
                 DefenseEntity defense,
                 int delayRounds = 0,
@@ -279,7 +269,19 @@ namespace BlacksmithCore.Infra.DSL
                     source => source.Focus.Get<Health>().LoseMHP(loss),
                     ifUndo);
             }
-
+            public SourceFile GainHP(int power, Func<bool>? ifUndo = null)
+            {
+                ifUndo ??= DefaultIfUndo;
+                _sentences.Add(new((source) =>
+                {
+                    if (ifUndo())
+                    {
+                        return;
+                    }
+                    source.Focus.Get<Health>().GainHP(power);
+                }, SentenceType.Recovery, StructureType.Main));
+                return SwitchState<SourceFile>();
+            }
             public SourceFile AddMark(string markName)
             {
                 var entity = new EffectEntity()
@@ -294,7 +296,27 @@ namespace BlacksmithCore.Infra.DSL
                     source.Focus.Get<Effect>().Add(entity);
                 });
             }
+            public SourceFile Query<T>(Func<Community, T> path, out Lazy<T> lazyResult)
+                where T : struct
+            {
+                bool isExecuted = false;
+                T result = default;
 
+                lazyResult = new Lazy<T>(() =>
+                {
+                    if (!isExecuted)
+                        throw new InvalidOperationException(
+                            $"尚未查询类型<{nameof(T)}>的数据。\n" +
+                            $"请确保在在lambda阶段使用此数据");
+                    return result;
+                });
+
+                return WriteFree(source =>
+                {
+                    result = path(source);
+                    isExecuted = true;
+                });
+            }
             public SourceFile TakeMark(string markName, out Lazy<int> layerNum)
             {
                 bool isExecuted = false;
@@ -385,6 +407,43 @@ namespace BlacksmithCore.Infra.DSL
                     _callbacksOnCompile.Add(callbacks);
                 });
             }
+            public SourceFile AddMainProfession<TMainProfession>(bool isExclusive = true) 
+                where TMainProfession : MainProfession, new()
+            {
+                return WriteFree(source =>
+                {
+                    var skill = source.Focus.Get<Skill>();
+                    skill.AddPackage(new(new TMainProfession()));
+                    if (isExclusive)
+                    {
+                        foreach (var name in ProfessionRegistry.MainProfessionSkillNames)
+                        {
+                            skill.RemoveSkill(nameof(Common), name);
+                        }
+                    }
+                    else
+                    {
+                        skill.RemoveSkill(nameof(Common), nameof(TMainProfession).ToLower());
+                    }
+                });
+            }
+            public SourceFile AddMainProfession<TMainProfession>(IReadOnlySet<string> exclusionSet)
+                where TMainProfession : MainProfession, new()
+            {
+                return WriteFree(source =>
+                {
+                    var skill = source.Focus.Get<Skill>();
+                    skill.AddPackage(new(new TMainProfession()));
+                    foreach (var name in exclusionSet)
+                    {
+                        skill.RemoveSkill(nameof(Common), name);
+                    }
+                    foreach (var name in ProfessionRegistry.MainProfessionSkillNames)
+                    {
+                        skill.RemoveSkill(nameof(Common), name);
+                    }
+                });
+            }
             #endregion
             #endregion
             // Protected API
@@ -409,13 +468,8 @@ namespace BlacksmithCore.Infra.DSL
         }
         public class DefenseFile : SourceFile
         {
-            public AttackFile WithModify(Action<AttackAnalyzableData> modifier)
-                => WithModify<AttackFile, AttackAnalyzableData>(modifier, SentenceType.Defense);
-        }
-        public class RecoveryFile : SourceFile
-        {
-            public AttackFile WithModify(Action<AttackAnalyzableData> modifier)
-                => WithModify<AttackFile, AttackAnalyzableData>(modifier, SentenceType.Recovery);
+            public DefenseFile WithModify(Action<DefenseAnalyzableData> modifier)
+                => WithModify<DefenseFile, DefenseAnalyzableData>(modifier, SentenceType.Defense);
         }
         public class AttackFile : SourceFile
         {
@@ -460,13 +514,13 @@ namespace BlacksmithCore.Infra.DSL
         }
         public class ResourceFile : SourceFile
         {
-            public AttackFile WithModify(Action<AttackAnalyzableData> modifier)
-                => WithModify<AttackFile, AttackAnalyzableData>(modifier, SentenceType.Resource);
+            public ResourceFile WithModify(Action<ResourceAnalyzableData> modifier)
+                => WithModify<ResourceFile, ResourceAnalyzableData>(modifier, SentenceType.Resource);
         }
         public class EffectFile : SourceFile
         {
-            public AttackFile WithModify(Action<AttackAnalyzableData> modifier)
-                => WithModify<AttackFile, AttackAnalyzableData>(modifier, SentenceType.Effect);
+            public EffectFile WithModify(Action<EffectAnalyzableData> modifier)
+                => WithModify<EffectFile, EffectAnalyzableData>(modifier, SentenceType.Effect);
         }
 
         public static SourceFile CreateBy(Pen Pen)

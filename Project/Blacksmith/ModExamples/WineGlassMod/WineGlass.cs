@@ -14,7 +14,7 @@ namespace ModExamples.WineGlassMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 0.5f);
         }
-        private IDSLSourceFile Wine(ISkillCheckContext sc)
+        private IDSLSourceFile Wine(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
@@ -25,7 +25,7 @@ namespace ModExamples.WineGlassMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wine(), 3f);
         }
-        private IDSLSourceFile Carnival(ISkillCheckContext sc)
+        private IDSLSourceFile Carnival(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3f, ResourceType.Instance.Wine())
@@ -47,7 +47,7 @@ namespace ModExamples.WineGlassMod
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Wine(), 3f);
         }
-        private IDSLSourceFile Forget(ISkillCheckContext sc)
+        private IDSLSourceFile Forget(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3f, ResourceType.Instance.Wine())

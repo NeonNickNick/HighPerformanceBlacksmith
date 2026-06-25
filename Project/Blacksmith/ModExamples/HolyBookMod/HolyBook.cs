@@ -19,7 +19,7 @@ namespace ModExamples
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 0.5f);
         }
-        private IDSLSourceFile Cross(ISkillCheckContext sc)
+        private IDSLSourceFile Cross(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
@@ -27,7 +27,7 @@ namespace ModExamples
             return DSL.CreateBy(pen);
         }
         private bool PrayCheck(ISkillCheckContext sc) => true;
-        private IDSLSourceFile Pray(ISkillCheckContext sc)
+        private IDSLSourceFile Pray(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .WriteDefense(3, new CommonReduction());
@@ -38,7 +38,7 @@ namespace ModExamples
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 2f);
         }
         [HasAttack]
-        private IDSLSourceFile Ark(ISkillCheckContext sc)
+        private IDSLSourceFile Ark(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Cross())
@@ -52,7 +52,7 @@ namespace ModExamples
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
         [HasAttack]
-        private IDSLSourceFile Blasphemy(ISkillCheckContext sc)
+        private IDSLSourceFile Blasphemy(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())
@@ -65,7 +65,7 @@ namespace ModExamples
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
-        private IDSLSourceFile Rebirth(ISkillCheckContext sc)
+        private IDSLSourceFile Rebirth(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())
@@ -86,7 +86,7 @@ namespace ModExamples
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Cross(), 1f);
         }
-        private IDSLSourceFile Exoneration(ISkillCheckContext sc)
+        private IDSLSourceFile Exoneration(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Cross())

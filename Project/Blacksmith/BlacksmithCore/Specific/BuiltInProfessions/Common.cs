@@ -16,12 +16,10 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
     using Pen = Func<BlacksmithDSL.SourceFile, BlacksmithDSL.SourceFile>;
     public partial class Common : MainProfession
     {
-        private static IReadOnlySet<string> ProfessionSkillNames => ProfessionRegistry.MainProfessionSkillNames;
-
         private static bool IronCheck(ISkillCheckContext sc) => true;
         [HasResource]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Iron(ISkillCheckContext sc)
+        private static IDSLSourceFile Iron(ISkillExecuteContext sc)
         {
 
             Pen pen = sf => sf.WriteResource(1, ResourceType.Instance.Iron());
@@ -34,7 +32,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(1)]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile Stick(ISkillCheckContext sc)
+        private static IDSLSourceFile Stick(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(0.5f, ResourceType.Instance.Iron())
@@ -48,7 +46,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(3)]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile Drill(ISkillCheckContext sc)
+        private static IDSLSourceFile Drill(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1.5f, ResourceType.Instance.Iron())
@@ -62,7 +60,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(1)]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Slash(ISkillCheckContext sc)
+        private static IDSLSourceFile Slash(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2.5f, ResourceType.Instance.Iron())
@@ -76,7 +74,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasDefense]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile Shield(ISkillCheckContext sc)
+        private static IDSLSourceFile Shield(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(sc.SkillDeclareData.Param * 0.5f, ResourceType.Instance.Iron())
@@ -97,7 +95,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasDefense]
         [Labels(Impression.Robust, Strength.Useless)]
-        private static IDSLSourceFile ThornShield(ISkillCheckContext sc)
+        private static IDSLSourceFile ThornShield(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1 + sc.SkillDeclareData.Param * 0.5f, ResourceType.Instance.Iron())
@@ -118,11 +116,11 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasRecovery]
         [Labels(Impression.Conservative, Strength.Useless)]
-        private static IDSLSourceFile Recovery(ISkillCheckContext sc)
+        private static IDSLSourceFile Recovery(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1 + sc.SkillDeclareData.Param, ResourceType.Instance.Iron())
-                .WriteRecovery(2 + 2 * sc.SkillDeclareData.Param);
+                .GainHP(2 + 2 * sc.SkillDeclareData.Param);
             return DSL.CreateBy(pen);
         }
 
@@ -132,7 +130,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Strong)]
-        private static IDSLSourceFile Space(ISkillCheckContext sc)
+        private static IDSLSourceFile Space(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
@@ -146,7 +144,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasResource]
         [Labels(Impression.Robust, Strength.Useless)]
-        private static IDSLSourceFile Time(ISkillCheckContext sc)
+        private static IDSLSourceFile Time(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
@@ -160,7 +158,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         }
         [HasAttack(8)]
         [Labels(Impression.Aggressive, Strength.Strong)]
-        private static IDSLSourceFile Tear(ISkillCheckContext sc)
+        private static IDSLSourceFile Tear(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Space())
@@ -174,7 +172,7 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
         [HasDefense]
         [HasBuff]
         [Labels(Impression.Aggressive, Strength.Super)]
-        private static IDSLSourceFile Reflect(ISkillCheckContext sc)
+        private static IDSLSourceFile Reflect(ISkillExecuteContext sc)
         {
             Pen pen = sf => sf
                 .UseResource(2, ResourceType.Instance.Space())
@@ -235,33 +233,31 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                 tc.WriteAnalyzableData(res);
             }
         }
+        
         private static bool WarlockCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 1f);
         }
         [IsProfessionSkill]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Warlock(ISkillCheckContext sc)
+        private static IDSLSourceFile Warlock(ISkillExecuteContext sc)
         {
-            sc.Self.Focus.Get<Skill>().AddPackage(new(new Warlock()));
             Pen pen = sf => sf
                 .UseResource(1, ResourceType.Instance.Iron())
-                .WriteFree(source =>
-                {
-                    ExcludeAllProfessions(source);
-                });
+                .AddMainProfession<Warlock>();
             return DSL.CreateBy(pen);
         }
+        
 
+        
         private static bool CannonCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 4);
         }
         [IsProfessionSkill]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Cannon(ISkillCheckContext sc)
+        private static IDSLSourceFile Cannon(ISkillExecuteContext sc)
         {
-            sc.Self.Focus.Get<Skill>().AddPackage(new(new Cannon()));
             Pen pen = sf => sf
                 .UseResource(4, ResourceType.Instance.Iron())
                 .WriteDefense(new()
@@ -272,81 +268,68 @@ namespace BlacksmithCore.Specific.BuiltInProfessions
                     Power = 3,
                     Clock = new()
                 })
-                .WriteFree(source =>
-                {
-                    ExcludeAllProfessions(source);
-                });
+                .AddMainProfession<Cannon>();
             return DSL.CreateBy(pen);
         }
+        
 
+        
         private static bool DriverCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3);
         }
         [IsProfessionSkill]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Driver(ISkillCheckContext sc)
+        private static IDSLSourceFile Driver(ISkillExecuteContext sc)
         {
-            sc.Self.Focus.Get<Skill>().AddPackage(new(new Driver()));
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
-                .WriteFree(source =>
-                {
-                    ExcludeAllProfessions(source);
-                });
+                .AddMainProfession<Driver>();
             return DSL.CreateBy(pen);
         }
+        
 
+        
         private static bool BloodSigilCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 7);
         }
         [IsProfessionSkill]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile BloodSigil(ISkillCheckContext sc)
+        private static IDSLSourceFile BloodSigil(ISkillExecuteContext sc)
         {
-            sc.Self.Focus.Get<Skill>().AddPackage(new(new BloodSigil()));
             Pen pen = sf => sf
                 .UseResource(7, ResourceType.Instance.Iron())
+                .AddMainProfession<BloodSigil>(new HashSet<string>()
+                {
+                    nameof(Stick).ToLower(),
+                    nameof(Drill).ToLower(),
+                    nameof(Slash).ToLower(),
+                    nameof(Tear).ToLower()
+                })
                 .WriteFree(source =>
                 {
-                    ExcludeAllProfessions(source);
-                    List<string> addition = new()
-                    {
-                        nameof(Stick).ToLower(),
-                        nameof(Drill).ToLower(),
-                        nameof(Slash).ToLower(),
-                        nameof(Tear).ToLower()
-                    };
-                    addition.ForEach(a => source.Focus.Get<Skill>().RemoveSkill(nameof(Common), a));
                     source.Focus.Get<Health>().GainMHP(3);
                     source.Focus.Get<Health>().GainHP(3);
                 });
             return DSL.CreateBy(pen);
         }
+        
+        
         private static bool LancerCheck(ISkillCheckContext sc)
         {
             return sc.Self.Focus.Get<Resource>().Check(ResourceType.Instance.Iron(), 3);
         }
         [IsProfessionSkill]
         [Labels(Impression.Robust, Strength.Ordinary)]
-        private static IDSLSourceFile Lancer(ISkillCheckContext sc)
+        private static IDSLSourceFile Lancer(ISkillExecuteContext sc)
         {
-            sc.Self.Focus.Get<Skill>().AddPackage(new(new Lancer()));
             Pen pen = sf => sf
                 .UseResource(3, ResourceType.Instance.Iron())
-                .WriteFree(source =>
-                {
-                    ExcludeAllProfessions(source);
-                });
+                .AddMainProfession<Lancer>();
             return DSL.CreateBy(pen);
         }
-        public static void ExcludeAllProfessions(Community source)
-        {
-            foreach (var name in ProfessionSkillNames)
-            {
-                source.Focus.Get<Skill>().RemoveSkill(nameof(Common), name);
-            }
-        }
+        
+        
     }
 }
